@@ -7,16 +7,32 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
+
+User = get_user_model()
+
 def signup_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         password_confirmation = request.POST['password_confirmation']
-        
-        if password == password_confirmation:
+
+        if password != password_confirmation:
+            return render(request, 'signup.html', {'error': 'كلمة المرور غير متطابقة.'})
+
+        # ✅ التحقق مما إذا كان اسم المستخدم مستخدمًا بالفعل
+        if User.objects.filter(username=username).exists():
+            return render(request, 'signup.html', {'error': 'اسم المستخدم مستخدم بالفعل. اختر اسمًا آخر.'})
+
+        try:
             user = User.objects.create_user(username=username, password=password)
+            user.save()
             login(request, user)  # تسجيل الدخول تلقائيًا بعد إنشاء الحساب
-            return redirect('home')  # توجيه المستخدم إلى الصفحة الرئيسية
+            return redirect('home')
+        except IntegrityError:
+            return render(request, 'signup.html', {'error': 'حدث خطأ أثناء التسجيل. حاول مرة أخرى.'})
+
     return render(request, 'signup.html')
 
 def login_view(request):
