@@ -114,7 +114,8 @@ def edit_profile(request):
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('profile')  # غير 'profile' إلى اسم صفحتك الشخصية
+            return redirect('profile', username=request.user.username)  # ✅ تمرير اسم المستخدم
+
     else:
         form = ProfileUpdateForm(instance=request.user)
 
