@@ -2,13 +2,13 @@ from django.urls import path
 from . import views
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import profile_view, edit_profile  # ✅ تأكد من استيراد profile_view
+from .views import login_view, logout_view, signup_view, edit_profile, profile_view
 
 
 
 urlpatterns = [
     path('signup', views.signup_view, name='signup'),
-    path('', views.login_view, name='login'),
+    path('login/', login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
     path('home', views.home_view, name='home'),
     path('post/create/', views.post_create_view, name='post_create'),
