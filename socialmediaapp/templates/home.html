@@ -1,0 +1,200 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aite Salem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+    <!-- ✅ النافبار -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Aiter.jpg" alt="Aite Logo" width="40" height="40" style="border-radius: 50%;">  
+                <strong>Aite</strong>
+            </a>
+            <input type="text" class="search-bar form-control" placeholder="حوس ...">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                    
+                        <a class="nav-link" href="{% url 'profile' request.user.username %}">
+                            <i class="fas fa-user"></i> بروفايلي
+                        </a>
+                        
+                        </li>
+                        
+                        <a class="nav-link" href="{% url 'post_create' %}">
+                            <i class="fas fa-plus-circle"></i> صنع منشور
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> خرج علينا
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ محتوى الصفحة -->
+    <div class="container content-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% for post in posts %}
+                    <div class="post">
+                        <div class="post-header d-flex align-items-center">
+                            <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2 border" alt="User avatar" 
+                            onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';"
+                            style="width: 50px; height: 50px; object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="mb-0">
+                                                            <a href="{% url 'profile' post.user.username %}" class="text-decoration-none">
+                                                                {{ post.user }}
+                                                            </a>
+                                                        </h6>
+                                                        
+                                <small class="text-muted">{{ post.created_at }}</small>
+                            </div>
+                            {% if post.user == request.user %}
+                                <form method="POST" action="{% url 'delete_post' post.id %}" class="ms-auto">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('خصك تمحي المنشور؟');">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+
+                        <p class="post-content mt-2">{{ post.content }}</p>
+                        
+                        {% if post.image %}
+                            <div class="post-image-container">
+                                <img src="{{ post.image.url }}" alt="Post image" class="img-fluid rounded">
+                            </div>
+                        {% endif %}
+
+                        <!-- ✅ أزرار التفاعل -->
+                        <div class="post-actions d-flex justify-content-between align-items-center mt-3">
+                            <button class="btn btn-outline-danger btn-sm like-button" onclick="toggleLike(this, {{ post.id }})">
+                                <i class="{% if request.user in post.likers.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ post.likers.count }}</span>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm comment-button" data-bs-toggle="collapse" data-bs-target="#comments-{{ post.id }}">
+                                <i class="fas fa-comment"></i> التعليقات
+                            </button>
+                        </div>
+
+                        <!-- ✅ التعليقات -->
+                        <div class="collapse mt-3" id="comments-{{ post.id }}">
+                            <h6>التعليقات:</h6>
+                            <div class="comments-list">
+                                {% for comment in post.comments.all %}
+                                    <div class="comment">
+                                        <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                                    </div>
+                                {% empty %}
+                                    <p>لا توجد تعليقات بعد.</p>
+                                {% endfor %}
+                            </div>
+                            <form method="POST" class="mt-2 add-comment-form" data-post-id="{{ post.id }}">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="content" class="form-control comment-input" placeholder="أضف تعليقًا..." required>
+                                    <button type="submit" class="btn btn-primary">بعث</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleLike(button, postId) {
+            let icon = button.querySelector("i");
+            let count = button.querySelector(".like-count");
+
+            fetch(`/like/${postId}/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked) {
+                    icon.classList.remove("far");
+                    icon.classList.add("fas", "text-danger");
+                } else {
+                    icon.classList.remove("fas", "text-danger");
+                    icon.classList.add("far");
+                }
+                count.textContent = data.like_count;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                let cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // AJAX for adding comments
+        document.querySelectorAll('.add-comment-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const postId = this.dataset.postId;
+                const commentInput = this.querySelector('.comment-input');
+                const commentsList = this.closest('.collapse').querySelector('.comments-list');
+
+                fetch(`/post/${postId}/comment/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `content=${encodeURIComponent(commentInput.value)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const newComment = document.createElement('div');
+                        newComment.classList.add('comment');
+                        newComment.innerHTML = `<strong>${data.username}</strong>: ${data.comment_content}`;
+                        commentsList.appendChild(newComment);
+                        commentInput.value = '';
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
