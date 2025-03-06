@@ -149,19 +149,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # settings.py
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # إعدادات الملفات الثابتة
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # مجلد collectstatic
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'socialmediaapp/static'),  # مجلد الـ Static الخاص بالتطبيق
-]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'socialmediaapp/static')]  # مجلدات الملفات الثابتة
+
+# إعدادات الملفات الوسائط
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'socialmediaapp.CustomUser'
 LOGIN_URL = '/login/'  # تأكد من أن لديك مسار تسجيل الدخول الصحيح هنا
