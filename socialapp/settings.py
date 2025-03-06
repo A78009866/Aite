@@ -96,13 +96,23 @@ WSGI_APPLICATION = 'socialapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# تحليل Internal Database URL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  # استخدام PostgreSQL
+        'NAME': 'railway',  # اسم قاعدة البيانات
+        'USER': 'postgres',  # اسم المستخدم
+        'PASSWORD': 'VtSielhJRwnjUAXXXJELzrQUFtpbUAKk',  # كلمة المرور
+        'HOST': 'postgres.railway.internal',  # Hostname
+        'PORT': '5432',  # Port
     }
 }
+import dj_database_url
 
+DATABASES = {
+    'default': dj_database_url.parse('postgresql://postgres:VtSielhJRwnjUAXXXJELzrQUFtpbUAKk@turntable.proxy.rlwy.net:46027/railway')
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
