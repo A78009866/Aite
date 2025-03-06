@@ -139,11 +139,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 # settings.py
-
+# إعدادات الملفات الثابتة
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]  # المسار إلى مجلد static الخاص بك
-STATIC_ROOT = BASE_DIR / "staticfiles"    # مجلد collectstatic
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # مجلد collectstatic
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'socialmediaapp/static'),  # مجلد الـ Static الخاص بالتطبيق
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
