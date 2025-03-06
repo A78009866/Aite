@@ -1,7 +1,9 @@
 from django import forms
-from .models import CustomUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
-        model = CustomUser
-        fields = ['username', 'profile_picture']
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'profile_picture']  # قم بتعديل الحقول حسب احتياجاتك

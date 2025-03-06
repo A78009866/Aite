@@ -151,5 +151,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
 AUTH_USER_MODEL = 'socialmediaapp.CustomUser'
 LOGIN_URL = '/login/'  # تأكد من أن لديك مسار تسجيل الدخول الصحيح هنا

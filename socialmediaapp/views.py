@@ -115,10 +115,8 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             return redirect('profile', username=request.user.username)  # ✅ تمرير اسم المستخدم
-
     else:
         form = ProfileUpdateForm(instance=request.user)
-
     return render(request, 'edit_profile.html', {'form': form})
 
 from django.contrib.auth.decorators import login_required
