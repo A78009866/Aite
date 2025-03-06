@@ -100,7 +100,14 @@ import dj_database_url
 
 # تحليل Internal Database URL
 DATABASES = {
-    'default': dj_database_url.parse('postgres://aite_user:6w6kKe4NyCLWYhUfU3LbjDRWParJ8FBq@dpg-cuoc348gph6c73dl3j20-a:5432/aite')
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # استخدام PostgreSQL
+        'NAME': 'aite',  # اسم قاعدة البيانات
+        'USER': 'aite_user',  # اسم المستخدم
+        'PASSWORD': '6w6kKe4NyCLWYhUfU3LbjDRWParJ8FBq',  # كلمة المرور
+        'HOST': 'dpg-cuoc348gph6c73dl3j20-a',  # Hostname
+        'PORT': '5432',  # Port
+    }
 }
 
 
