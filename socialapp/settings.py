@@ -96,7 +96,6 @@ WSGI_APPLICATION = 'socialapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-import dj_database_url
 
 # تحليل Internal Database URL
 DATABASES = {
