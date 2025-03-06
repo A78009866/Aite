@@ -49,3 +49,4 @@ WTForms==3.2.1
 gunicorn
 cloudinary
 django-cloudinary-storage
+dj-database-url==2.3.0
