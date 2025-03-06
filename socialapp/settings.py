@@ -96,20 +96,12 @@ WSGI_APPLICATION = 'socialapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'aite',
-        'USER': 'aite_user',
-        'PASSWORD': '6w6kKe4NyCLWYhUfU3LbjDRWParJ8FBq',
-        'HOST': 'dpg-cuoc348gph6c73dl3j20-a',  # أو عنوان السيرفر إذا كنت تستخدم PostgreSQL عن بعد
-        'PORT': '5432',  # المنفذ الافتراضي لـ PostgreSQL
-        'OPTIONS': {
-            'client_encoding': 'UTF8',
-        }
-    }
-}
+import dj_database_url
 
+# تحليل Internal Database URL
+DATABASES = {
+    'default': dj_database_url.parse('postgres://aite_user:6w6kKe4NyCLWYhUfU3LbjDRWParJ8FBq@dpg-cuoc348gph6c73dl3j20-a:5432/aite')
+}
 
 
 # Password validation
