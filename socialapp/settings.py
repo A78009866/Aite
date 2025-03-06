@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'socialapp',
     "socialmediaapp",
+    "cloudinary"
 ]
 
 MIDDLEWARE = [
@@ -170,3 +171,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'socialmediaapp.CustomUser'
 LOGIN_URL = '/login/'  # تأكد من أن لديك مسار تسجيل الدخول الصحيح هنا
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+# إعدادات Cloudinary
+cloudinary.config(
+    cloud_name="duixjs8az",  # استبدلها بـ Cloud Name الخاص بك
+    api_key="143978951428697",        # استبدلها بـ API Key الخاص بك
+    api_secret="9dX6eIvntdtGQIU7oXGMSRG9I2o",  # استبدلها بـ API Secret الخاص بك
+    secure=True
+)

@@ -174,7 +174,7 @@ body {
 
                         <!-- ✅ أزرار التفاعل -->
                         <div class="post-actions d-flex justify-content-between align-items-center mt-3">
-                            <button class="btn btn-outline-danger btn-sm like-button" onclick="toggleLike(this, {post,id } )">
+                            <button class="btn btn-outline-danger btn-sm like-button" onclick="toggleLike(this, {{ post.id }})">
                                 <i class="{% if request.user in post.likers.all %}fas{% else %}far{% endif %} fa-heart"></i>
                                 <span class="like-count">{{ post.likers.count }}</span>
                             </button>
