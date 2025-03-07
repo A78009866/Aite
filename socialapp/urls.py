@@ -20,12 +20,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from chatapp.views import chat_view
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-     path('', include('socialmediaapp.urls')),
-     
+    path('', include('socialmediaapp.urls')),
+     path("chat/", chat_view, name="chat"),
+
+
      
 ]
 if settings.DEBUG:

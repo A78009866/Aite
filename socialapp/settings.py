@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-f8_&v%-2b$!%$rz=po!@&5jcy=@)_gzd(wh_jfadn6qyj8q1bp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['aitesalem.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['aite-44i1.onrender.com', '127.0.0.1', 'localhost']
 # settings.py
 
 STATIC_URL = '/static/'
@@ -56,8 +56,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'socialapp',
-    "socialmediaapp",
-    "cloudinary"
+    'socialmediaapp',
+    'cloudinary',
+    'channels',
+    'chatapp',  # تأكد من إضافة تطبيق الدردشة
 ]
 
 MIDDLEWARE = [
@@ -183,3 +185,14 @@ cloudinary.config(
     api_secret="9dX6eIvntdtGQIU7oXGMSRG9I2o",  # استبدلها بـ API Secret الخاص بك
     secure=True
 )
+ASGI_APPLICATION = 'socialapp.asgi.application'
+
+# إعداد Redis كقناة للاتصال الفوري
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],  # تأكد من تشغيل Redis على هذا المنفذ
+        },
+    },
+}

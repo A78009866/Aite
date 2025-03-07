@@ -2,10 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Post, Like, Dislike, Comment
+from .models import Post, Like, Comment
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse
+
 
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
@@ -63,26 +66,46 @@ def post_create_view(request):
         return redirect('home')
     return render(request, 'post_create.html')
 
-@login_required
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    user = request.user
-
-    if user in post.likers.all():
-        post.likers.remove(user)
-        liked = False
-    else:
-        post.likers.add(user)
-        liked = True
-
-    return JsonResponse({"liked": liked, "like_count": post.likers.count()})
+from django.http import JsonResponse
 
 @login_required
-def dislike_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if not post.dislikes.filter(user=request.user).exists():
-        Dislike.objects.create(user=request.user, post=post)
-    return redirect('home')
+def like_post(request, id):
+    if request.method == 'POST':
+        post = get_object_or_404(Post, pk=id)
+        user = request.user
+
+        if user in post.likers.all():
+            # إذا كان المستخدم قد أعجب بالمنشور بالفعل، قم بإزالة الإعجاب
+            post.likers.remove(user)
+            liked = False
+        else:
+            # إذا لم يكن المستخدم قد أعجب بالمنشور، قم بإضافة الإعجاب
+            post.likers.add(user)
+            liked = True
+
+        return JsonResponse({
+            'liked': liked,
+            'like_count': post.likers.count()
+        })
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@login_required
+def unlike_post(request, id):
+    if request.method == 'POST':
+        post = get_object_or_404(Post, pk=id)
+        user = request.user
+
+        if user in post.likers.all():
+            post.likers.remove(user)
+            liked = False
+        else:
+            liked = True
+
+        return JsonResponse({
+            'liked': liked,
+            'like_count': post.likers.count()
+        })
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 @login_required
 def add_comment(request, post_id):
@@ -97,6 +120,7 @@ def add_comment(request, post_id):
             'created_at': comment.created_at.strftime("%Y-%m-%d %H:%M:%S")
         })
     return JsonResponse({'success': False})
+
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
