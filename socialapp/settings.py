@@ -58,8 +58,6 @@ INSTALLED_APPS = [
     'socialapp',
     'socialmediaapp',
     'cloudinary',
-    'channels',
-    'chatapp',  # تأكد من إضافة تطبيق الدردشة
 ]
 
 MIDDLEWARE = [

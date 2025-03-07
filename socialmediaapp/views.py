@@ -107,19 +107,33 @@ def unlike_post(request, id):
         })
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-@login_required
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Post, Comment
+
+@csrf_exempt
 def add_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    if request.method == 'POST':
-        content = request.POST.get('content')
-        comment = Comment.objects.create(user=request.user, post=post, content=content)
-        return JsonResponse({
-            'success': True,
-            'comment_content': comment.content,
-            'username': comment.user.username,
-            'created_at': comment.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        })
-    return JsonResponse({'success': False})
+    if request.method == "POST":
+        data = json.loads(request.body)
+        content = data.get("content")
+        
+        if not content:
+            return JsonResponse({"success": False, "error": "تعليق فارغ"}, status=400)
+        
+        try:
+            post = Post.objects.get(id=post_id)
+            comment = Comment.objects.create(user=request.user, post=post, content=content)
+            
+            return JsonResponse({
+                "success": True,
+                "username": request.user.username,
+                "content": comment.content
+            })
+        except Post.DoesNotExist:
+            return JsonResponse({"success": False, "error": "المنشور غير موجود"}, status=404)
+    
+    return JsonResponse({"success": False, "error": "طلب غير صالح"}, status=400)
 
 @login_required
 def delete_post(request, post_id):
