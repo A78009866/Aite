@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منشور {{ post.user }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .post-container {
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            margin: 50px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .post-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .post-user {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .post-content {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            display: block;
+            margin-top: 20px;
+            text-decoration: none;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="post-container">
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post Image" class="post-image">
+        {% else %}
+            <img src="https://via.placeholder.com/500" alt="No Image Available" class="post-image">
+        {% endif %}
+        
+        <h2 class="post-user">{{ post.user }}</h2>
+        <p class="post-content">{{ post.content }}</p>
+        
+        <a href="/" class="back-btn">🔙 العودة إلى الصفحة الرئيسية</a>
+    </div>
+
+</body>
+</html>

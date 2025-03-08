@@ -171,3 +171,27 @@ from django.shortcuts import render
 
 def splash(request):
     return render(request, 'splash.html')
+
+from django.http import JsonResponse
+from .models import CustomUser as User
+from .models import Post
+
+def search_view(request):
+    query = request.GET.get("q", "").strip()
+    if not query:
+        return JsonResponse({"users": [], "posts": []})
+
+    users = User.objects.filter(username__icontains=query).values("username")  # ✅ تعديل لاستخدام CustomUser
+    posts = Post.objects.filter(content__icontains=query).values("id", "content")
+
+    return JsonResponse({
+        "users": list(users),
+        "posts": list(posts)
+    })
+
+from django.shortcuts import render, get_object_or_404
+from .models import Post
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    return render(request, "post_detail.html", {"post": post})
