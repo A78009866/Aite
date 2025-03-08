@@ -166,3 +166,8 @@ def profile_view(request, username):
     user = get_object_or_404(User, username=username)  # جلب المستخدم المطلوب
     posts = Post.objects.filter(user=user).order_by('-created_at')  # جلب منشوراته فقط
     return render(request, 'profile.html', {'user': user, 'posts': posts})
+
+from django.shortcuts import render
+
+def splash(request):
+    return render(request, 'splash.html')

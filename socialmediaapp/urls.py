@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', views.home_view, name='home'),
+    path('home/', views.home_view, name='home'),
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
@@ -15,7 +15,7 @@ urlpatterns = [
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('profile/<str:username>/', views.profile_view, name='profile'),
-
+    path('splash/', views.splash, name='splash'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

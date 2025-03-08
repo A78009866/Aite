@@ -20,10 +20,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from socialmediaapp import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.splash, name='splash'),
+    path('', views.home_view, name='home'),
+
     path('', include('socialmediaapp.urls')),
 
 
