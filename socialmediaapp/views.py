@@ -52,9 +52,11 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+from django.db.models import Count
+
 @login_required
 def home_view(request):
-    posts = Post.objects.all()
+    posts = Post.objects.annotate(likes_count=Count('likers')).order_by('-likes_count', '-created_at')
     return render(request, 'home.html', {'posts': posts})
 
 @login_required
@@ -195,3 +197,4 @@ from .models import Post
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, "post_detail.html", {"post": post})
+
