@@ -2,18 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Post, Like, Comment
+from .models import Post, Like, Comment, CustomUser
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
-User = get_user_model()
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-
-
-from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
-User = get_user_model()
+User = get_user_model
 
 def signup_view(request):
     if request.method == 'POST':
@@ -63,8 +58,16 @@ def home_view(request):
 def post_create_view(request):
     if request.method == 'POST':
         content = request.POST['content']
-        image = request.FILES.get('image')
-        post = Post.objects.create(user=request.user, content=content, image=image)
+        image = request.FILES.get('image')  # تحميل الصورة
+        video = request.FILES.get('video')  # تحميل الفيديو
+        
+        # إنشاء المنشور مع الصورة أو الفيديو
+        post = Post.objects.create(
+            user=request.user,
+            content=content,
+            image=image,
+            video=video  # إضافة الفيديو إلى النموذج
+        )
         return redirect('home')
     return render(request, 'post_create.html')
 
