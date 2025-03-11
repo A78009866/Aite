@@ -58,16 +58,8 @@ def home_view(request):
 def post_create_view(request):
     if request.method == 'POST':
         content = request.POST['content']
-        image = request.FILES.get('image')  # تحميل الصورة
-        video = request.FILES.get('video')  # تحميل الفيديو
-        
-        # إنشاء المنشور مع الصورة أو الفيديو
-        post = Post.objects.create(
-            user=request.user,
-            content=content,
-            image=image,
-            video=video  # إضافة الفيديو إلى النموذج
-        )
+        image = request.FILES.get('image')
+        post = Post.objects.create(user=request.user, content=content, image=image)
         return redirect('home')
     return render(request, 'post_create.html')
 

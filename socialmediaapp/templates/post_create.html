@@ -63,7 +63,6 @@
             position: relative;
             overflow: hidden;
             display: inline-block;
-            margin-right: 10px; /* إضافة مسافة بين الأزرار */
         }
         .file-input-wrapper input[type=file] {
             font-size: 100px;
@@ -101,21 +100,13 @@
                 <textarea name="content" class="form-control" rows="4" placeholder="كتب كاش حاجة ..." required></textarea>
             </div>
             <div class="mb-3">
-                <!-- زر تحميل الصورة -->
                 <div class="file-input-wrapper">
                     <button class="btn-file" type="button">
                         <i class="fas fa-image"></i> دير فوطو
                     </button>
                     <input type="file" name="image" accept="image/*">
                 </div>
-                <!-- زر تحميل الفيديو -->
-                <div class="file-input-wrapper">
-                    <button class="btn-file" type="button">
-                        <i class="fas fa-video"></i> دير فيديو
-                    </button>
-                    <input type="file" name="video" accept="video/*">
-                </div>
-                <small class="form-text text-muted">دخل الفوطو أو الفيديو تاع المنشور تاعك</small>
+                <small class="form-text text-muted">دخل الفوطو تاع المنشور تاعك</small>
             </div>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-paper-plane"></i> بعث
