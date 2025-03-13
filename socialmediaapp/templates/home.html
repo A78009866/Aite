@@ -220,16 +220,20 @@
     border-radius: 12px;
     text-align: center;
     display: none;
-    animation: fadeInOut 5s ease-in-out; /* زيادة مدة التأثير */
-    max-width: 80%;
-    white-space: nowrap;
+    animation: fadeInOut 6s ease-in-out;
+    max-width: 90%;  /* 🔹 زيادة العرض ليسمح بعرض النصوص الطويلة */
+    white-space: normal; /* 🔹 السماح بتكسير النص الطويل إلى عدة أسطر */
+    word-wrap: break-word; /* 🔹 ضمان عدم خروج النص عن الحدود */
+    overflow: hidden; /* 🔹 منع أي تجاوز غير مرغوب فيه */
 }
 
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
-    10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+/* تحسين ظهور النص على الشاشات الصغيرة */
+@media (max-width: 600px) {
+    #popup-text {
+        font-size: 18px;  /* 🔹 تقليل حجم الخط قليلاً على الهواتف */
+        max-width: 95%;  /* 🔹 جعل النص يأخذ عرض أكبر */
+        padding: 12px 18px;  /* 🔹 تقليل الحواف قليلاً */
+    }
 }
 
 
