@@ -1,0 +1,104 @@
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold text-dark">Chrili Expres</h2>
+    
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-6 col-lg-4">
+                <div class="product-card">
+                    <img src="{{ product.image.url }}" class="product-image" alt="{{ product.name }}">
+                    <div class="product-info">
+                        <h5 class="product-title">{{ product.name }}</h5>
+                        <p class="product-description">{{ product.description }}</p>
+                        <p class="product-price"><strong>السعر:</strong> <span>{{ product.price }} دج</span></p>
+                        <a href="https://www.messenger.com/t/Chrili Expres?text=أريد شراء {{ product.name }}" class="btn btn-buy">
+                            <i class="fab fa-facebook-messenger"></i> طلب عبر فيسبوك
+                        </a>
+                        
+                        
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center text-muted">لا توجد منتجات متاحة حاليًا.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .product-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 20px;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .product-info {
+        padding: 10px;
+    }
+
+    .product-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .product-description {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .product-price {
+        font-size: 16px;
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 15px;
+    }
+
+    .btn-buy {
+        display: block;
+        width: 100%;
+        background: #1877f2;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .btn-buy:hover {
+        background: #145dbf;
+    }
+
+    /* ✅ تحسين للهواتف */
+    @media (max-width: 768px) {
+        .product-image {
+            height: 180px;
+        }
+    }
+</style>
+{% endblock %}

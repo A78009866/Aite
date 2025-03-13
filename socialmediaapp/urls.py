@@ -19,7 +19,8 @@ urlpatterns = [
     path('splash/', views.splash, name='splash'),
     path("search/", search_view, name="search"),
     path("post/<int:post_id>/", post_detail, name="post_detail"),
-   
+    path('store/', views.store, name='store'),
+    path('add-product/', views.add_product, name='add_product'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
