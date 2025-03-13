@@ -3,6 +3,7 @@ from . import views
 from django.conf.urls.static import static
 from django.conf import settings
 from .views import search_view, post_detail
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('home/', views.home_view, name='home'),
@@ -19,7 +20,8 @@ urlpatterns = [
     path('splash/', views.splash, name='splash'),
     path("search/", search_view, name="search"),
     path("post/<int:post_id>/", post_detail, name="post_detail"),
-   
+    path('change-password/', views.custom_password_change, name='custom_password_change'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

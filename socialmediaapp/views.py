@@ -193,3 +193,24 @@ def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, "post_detail.html", {"post": post})
 
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import CustomPasswordChangeForm
+
+@login_required
+def custom_password_change(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)  # تأمين استمرار الجلسة بعد تغيير كلمة المرور
+            messages.success(request, "تم تغيير كلمة المرور بنجاح!")
+            return redirect('profile', username=request.user.username)  # إعادة التوجيه إلى صفحة البروفايل
+        else:
+            messages.error(request, "حدث خطأ. تأكد من صحة البيانات المدخلة.")
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+
+    return render(request, 'custom_password_change.html', {'form': form})
