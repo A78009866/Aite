@@ -630,45 +630,47 @@
     "اللهم اجعلني مباركًا أينما كنت",
     "اللهم استر عورتي، وآمن روعتي، واحفظني من بين يدي ومن خلفي"
 ];
- // 🏆 جعل الزهرة قابلة للسحب
- flower.addEventListener("mousedown", function (e) {
-            isDragging = true;
-            offsetX = e.clientX - flower.getBoundingClientRect().left;
-            offsetY = e.clientY - flower.getBoundingClientRect().top;
-            flower.style.cursor = "grabbing";
+ // ✅ دعم السحب باللمس (Touch)
+ flower.addEventListener("touchstart", function (e) {
+            let touch = e.touches[0];
+            startDrag(touch.clientX, touch.clientY);
         });
 
-        document.addEventListener("mousemove", function (e) {
+        document.addEventListener("touchmove", function (e) {
             if (isDragging) {
-                let x = e.clientX - offsetX;
-                let y = e.clientY - offsetY;
-
-                // 🔹 تحديد الحدود داخل النافذة
-                let maxX = window.innerWidth - flower.offsetWidth;
-                let maxY = window.innerHeight - flower.offsetHeight;
-
-                flower.style.left = Math.max(0, Math.min(x, maxX)) + "px";
-                flower.style.top = Math.max(0, Math.min(y, maxY)) + "px";
+                let touch = e.touches[0];
+                moveFlower(touch.clientX, touch.clientY);
             }
         });
 
-        document.addEventListener("mouseup", function () {
-            isDragging = false;
-            flower.style.cursor = "grab";
+        document.addEventListener("touchend", function () {
+            stopDrag();
         });
 
-
-function moveFlower() {
-            let x = Math.random() * (window.innerWidth - 100);
-            let y = Math.random() * (window.innerHeight - 100);
-            flower.style.left = `${x}px`;
-            flower.style.top = `${y}px`;
+        // 🏆 دوال السحب وإيقافه
+        function startDrag(clientX, clientY) {
+            isDragging = true;
+            offsetX = clientX - flower.getBoundingClientRect().left;
+            offsetY = clientY - flower.getBoundingClientRect().top;
+            flower.style.cursor = "grabbing";
         }
 
-        // تحريك الزهرة بسلاسة كل 4 ثوانٍ
-        setInterval(moveFlower, 4000);
-        moveFlower();
+        function moveFlower(clientX, clientY) {
+            let x = clientX - offsetX;
+            let y = clientY - offsetY;
 
+            // 🔹 منع الخروج عن الشاشة
+            let maxX = window.innerWidth - flower.offsetWidth;
+            let maxY = window.innerHeight - flower.offsetHeight;
+
+            flower.style.left = Math.max(0, Math.min(x, maxX)) + "px";
+            flower.style.top = Math.max(0, Math.min(y, maxY)) + "px";
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            flower.style.cursor = "grab";
+        }
         flower.addEventListener("click", function () {
     let randomDhikr = adhkar[Math.floor(Math.random() * adhkar.length)];
     popup.innerText = randomDhikr;
