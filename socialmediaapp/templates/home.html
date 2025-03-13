@@ -186,35 +186,53 @@
             color: #007bff;
         }
         #floating-flower {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    font-size: 30px;
+    position: absolute;
+    width: 70px;  /* حجم الزهرة */
+    height: 70px;
     cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-    animation: float 3s infinite alternate;
+    transition: transform 0.3s ease-in-out, left 2s ease-in-out, top 2s ease-in-out;
 }
 
-#floating-flower:hover {
-    transform: scale(1.2);
+#floating-flower img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* جعلها دائرية */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: flowerFloat 3s infinite alternate ease-in-out;
 }
 
-@keyframes float {
+@keyframes flowerFloat {
     from { transform: translateY(0px); }
     to { transform: translateY(-10px); }
 }
 
+/* ✅ تحسين نافذة الأذكار */
 #popup-text {
     position: fixed;
-    bottom: 80px;
-    right: 30px;
-    background: rgba(0, 0, 0, 0.7);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(0, 0, 0, 0.85);
     color: white;
-    padding: 10px 15px;
-    border-radius: 10px;
-    font-size: 18px;
+    padding: 15px 25px;
+    font-size: 22px;
+    border-radius: 12px;
+    text-align: center;
     display: none;
+    animation: fadeInOut 5s ease-in-out; /* زيادة مدة التأثير */
+    max-width: 80%;
+    white-space: nowrap;
 }
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+    10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+}
+
+
 
     </style>
 </head>
@@ -542,20 +560,97 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <div id="floating-flower">
-    🌸
+   <div id="floating-flower">
+    <img src="https://png.pngtree.com/png-clipart/20190630/original/pngtree-vector-flower-icon-png-image_4147096.jpg" alt="زهرة" />
 </div>
-<div id="popup-text">استغفر الله</div>
-<script>
-    document.getElementById("floating-flower").addEventListener("click", function() {
-        let popup = document.getElementById("popup-text");
-        popup.style.display = "block";
+<div id="popup-text"></div>
 
-        setTimeout(function() {
-            popup.style.display = "none";
-        }, 2000); // إخفاء النص بعد ثانيتين
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        let flower = document.getElementById("floating-flower");
+        let popup = document.getElementById("popup-text");
+
+        // قائمة الأذكار
+       let adhkar = [
+    "سبحان الله وبحمده",
+    "سبحان الله العظيم",
+    "لا إله إلا الله",
+    "الحمد لله",
+    "الله أكبر",
+    "لا حول ولا قوة إلا بالله",
+    "أستغفر الله",
+    "اللهم صلِّ وسلم على نبينا محمد",
+    "اللهم لك الحمد كما ينبغي لجلال وجهك وعظيم سلطانك",
+    "اللهم اغفر لي ولوالدي ولجميع المسلمين",
+    "رضيت بالله ربا، وبالإسلام دينا، وبمحمد صلى الله عليه وسلم نبيا",
+    "اللهم إني أسألك العفو والعافية في الدنيا والآخرة",
+    "اللهم إني أعوذ بك من الهم والحزن والعجز والكسل والجبن والبخل وغلبة الدين وقهر الرجال",
+    "اللهم إني أعوذ بك من زوال نعمتك وتحول عافيتك وفجاءة نقمتك وجميع سخطك",
+    "اللهم إني أسألك الجنة وأعوذ بك من النار",
+    "اللهم اجعل القرآن ربيع قلبي ونور صدري وجلاء حزني وذهاب همي",
+    "اللهم اهدني وسددني",
+    "اللهم أصلح لي شأني كله، ولا تكلني إلى نفسي طرفة عين",
+    "اللهم إني أعوذ بك من الكفر والفقر وعذاب القبر",
+    "اللهم إني أعوذ بك من شر ما عملت ومن شر ما لم أعمل",
+    "اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت",
+    "اللهم أعني على ذكرك وشكرك وحسن عبادتك",
+    "اللهم إني أسألك علما نافعا، ورزقا طيبا، وعملا متقبلا",
+    "اللهم ثبت قلبي على دينك",
+    "يا حي يا قيوم برحمتك أستغيث، أصلح لي شأني كله، ولا تكلني إلى نفسي طرفة عين",
+    "اللهم اجعلني من التوابين واجعلني من المتطهرين",
+    "اللهم اجعل لي من كل هم فرجا، ومن كل ضيق مخرجا، ومن كل بلاء عافية",
+    "اللهم اجعل آخر كلامي من الدنيا لا إله إلا الله",
+    "اللهم ارزقني حسن الخاتمة",
+    "اللهم إني أعوذ بك من فتنة المحيا والممات وفتنة المسيح الدجال",
+    "اللهم اجعل لي لسانا ذاكرا وقلبا شاكرا وبدنا صابرا",
+    "اللهم أنت السلام ومنك السلام فحينا ربنا بالسلام",
+    "اللهم اغفر لنا خطايانا وجهلنا وإسرافنا في أمرنا",
+    "اللهم اجعلني لك ذكارا، لك شكارا، لك مطواعا",
+    "اللهم اغفر لي ما قدمت وما أخرت وما أسررت وما أعلنت وما أنت أعلم به مني",
+    "اللهم اجعل حبي لك فوق حبي لنفسي وأهلي ومالي",
+    "اللهم إني أسألك حسن الخلق والعفو والعافية في الدنيا والآخرة",
+    "اللهم اجعلنا ممن تقول لهم الجنة: \"أقبل فقد اشتقت إليك\"",
+    "اللهم إني أعوذ بك من الهم والحزن، وأعوذ بك من العجز والكسل",
+    "اللهم إني أعوذ بك من علم لا ينفع، ومن قلب لا يخشع، ومن دعاء لا يُسمع",
+    "اللهم أعنا على صيام رمضان وقيامه إيمانًا واحتسابًا",
+    "اللهم اجعلنا من أهل الجنة، وارزقنا الفردوس الأعلى بغير حساب",
+    "اللهم لا تجعل الدنيا أكبر همنا، ولا مبلغ علمنا، ولا إلى النار مصيرنا",
+    "اللهم إني أسألك رضاك والجنة وأعوذ بك من سخطك والنار",
+    "اللهم اجعل خير أيامي يوم ألقاك",
+    "اللهم إني أعوذ بك من سوء الخاتمة",
+    "اللهم اجعل القرآن الكريم نورًا لصدري وربيعًا لقلبي وجلاءً لحزني",
+    "اللهم اجعلنا من المتقين، واجعلنا من ورثة جنة النعيم",
+    "اللهم اجعلنا من الذين لا خوف عليهم ولا هم يحزنون",
+    "اللهم إني أسألك باسمك الأعظم الذي إذا دعيت به أجبت، وإذا سئلت به أعطيت",
+    "اللهم اجعلني مباركًا أينما كنت",
+    "اللهم استر عورتي، وآمن روعتي، واحفظني من بين يدي ومن خلفي"
+];
+
+
+function moveFlower() {
+            let x = Math.random() * (window.innerWidth - 100);
+            let y = Math.random() * (window.innerHeight - 100);
+            flower.style.left = `${x}px`;
+            flower.style.top = `${y}px`;
+        }
+
+        // تحريك الزهرة بسلاسة كل 4 ثوانٍ
+        setInterval(moveFlower, 4000);
+        moveFlower();
+
+        flower.addEventListener("click", function () {
+    let randomDhikr = adhkar[Math.floor(Math.random() * adhkar.length)];
+    popup.innerText = randomDhikr;
+    popup.style.display = "block";
+
+    setTimeout(function () {
+        popup.style.display = "none";
+    }, 5000);  // زيادة المدة إلى 6 ثوانٍ
+});
+
     });
 </script>
+
 
 </body>
 </html>
