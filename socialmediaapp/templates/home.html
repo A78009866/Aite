@@ -570,9 +570,10 @@
 <div id="popup-text"></div>
 
 <script>
-     document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", function () {
         let flower = document.getElementById("floating-flower");
         let popup = document.getElementById("popup-text");
+        let isDragging = false, offsetX = 0, offsetY = 0;
 
         // قائمة الأذكار
        let adhkar = [
@@ -629,6 +630,32 @@
     "اللهم اجعلني مباركًا أينما كنت",
     "اللهم استر عورتي، وآمن روعتي، واحفظني من بين يدي ومن خلفي"
 ];
+ // 🏆 جعل الزهرة قابلة للسحب
+ flower.addEventListener("mousedown", function (e) {
+            isDragging = true;
+            offsetX = e.clientX - flower.getBoundingClientRect().left;
+            offsetY = e.clientY - flower.getBoundingClientRect().top;
+            flower.style.cursor = "grabbing";
+        });
+
+        document.addEventListener("mousemove", function (e) {
+            if (isDragging) {
+                let x = e.clientX - offsetX;
+                let y = e.clientY - offsetY;
+
+                // 🔹 تحديد الحدود داخل النافذة
+                let maxX = window.innerWidth - flower.offsetWidth;
+                let maxY = window.innerHeight - flower.offsetHeight;
+
+                flower.style.left = Math.max(0, Math.min(x, maxX)) + "px";
+                flower.style.top = Math.max(0, Math.min(y, maxY)) + "px";
+            }
+        });
+
+        document.addEventListener("mouseup", function () {
+            isDragging = false;
+            flower.style.cursor = "grab";
+        });
 
 
 function moveFlower() {
