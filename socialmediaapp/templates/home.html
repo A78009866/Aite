@@ -185,7 +185,37 @@
             font-size: 18px;
             color: #007bff;
         }
-        
+        #floating-flower {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    animation: float 3s infinite alternate;
+}
+
+#floating-flower:hover {
+    transform: scale(1.2);
+}
+
+@keyframes float {
+    from { transform: translateY(0px); }
+    to { transform: translateY(-10px); }
+}
+
+#popup-text {
+    position: fixed;
+    bottom: 80px;
+    right: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 18px;
+    display: none;
+}
+
     </style>
 </head>
 <body>
@@ -207,10 +237,7 @@
                 <a class="nav-link" href="{% url 'profile' request.user.username %}">
                     <i class="fas fa-user"></i> بروفايلي
                 </a>
-                <a class="nav-link" href="{% url 'store' %}">
-                    <i class="fas fa-store"></i> Chrili Expres
-                </a>
-                
+               
                 <a class="nav-link" href="{% url 'post_create' %}">
                     <i class="fas fa-plus-circle"></i> صنع منشور
                 </a>
@@ -515,5 +542,20 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="floating-flower">
+    🌸
+</div>
+<div id="popup-text">استغفر الله</div>
+<script>
+    document.getElementById("floating-flower").addEventListener("click", function() {
+        let popup = document.getElementById("popup-text");
+        popup.style.display = "block";
+
+        setTimeout(function() {
+            popup.style.display = "none";
+        }, 2000); // إخفاء النص بعد ثانيتين
+    });
+</script>
+
 </body>
 </html>
