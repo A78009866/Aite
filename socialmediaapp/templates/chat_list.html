@@ -1,4 +1,3 @@
-
 {% block content %}
 <style>
     /* ✅ تصميم عام للصفحة */
@@ -10,14 +9,15 @@
     }
 
     .container {
-        margin-top: 80px; /* تعويض النافبار الثابت */
-        padding: 20px;
+        margin-top: 60px; /* تعويض النافبار الثابت */
+        padding: 15px;
     }
 
     h2 {
         color: #333;
         margin-bottom: 20px;
         text-align: center;
+        font-size: 24px; /* حجم أكبر للعنوان */
     }
 
     /* ✅ تصميم قائمة المستخدمين */
@@ -78,6 +78,7 @@
         border-radius: 5px;
         text-decoration: none;
         font-size: 14px;
+        transition: background-color 0.3s;
     }
 
     .user-item .send-message-btn:hover {
@@ -87,8 +88,12 @@
     /* ✅ تصميم للهواتف */
     @media (max-width: 768px) {
         .container {
-            margin-top: 60px;
+            margin-top: 50px; /* تقليل الهامش العلوي */
             padding: 10px;
+        }
+
+        h2 {
+            font-size: 20px; /* حجم أصغر للعنوان على الهواتف */
         }
 
         .user-item {
@@ -102,16 +107,34 @@
         }
 
         .user-item .user-info h6 {
-            font-size: 14px;
+            font-size: 14px; /* حجم أصغر للنص على الهواتف */
         }
 
         .user-item .user-info small {
-            font-size: 12px;
+            font-size: 12px; /* حجم أصغر للنص على الهواتف */
         }
 
         .user-item .send-message-btn {
             padding: 6px 10px;
-            font-size: 12px;
+            font-size: 12px; /* حجم أصغر للزر على الهواتف */
+        }
+    }
+
+    /* ✅ تحسينات إضافية للهواتف */
+    @media (max-width: 480px) {
+        .user-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .user-item img {
+            margin-bottom: 10px;
+        }
+
+        .user-item .send-message-btn {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
         }
     }
 </style>
