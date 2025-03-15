@@ -21,14 +21,15 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: #f0f2f5;
+    background: #121212; /* خلفية داكنة */
+    color: #ffffff; /* نص أبيض */
 }
 .chat-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     max-width: 100%;
-    background: white;
+    background: #1e1e1e; /* خلفية داكنة */
 }
 .chat-header {
     padding: 15px;
@@ -43,14 +44,14 @@ body {
     padding: 15px;
     display: flex;
     flex-direction: column;
-    background: #f8f9fa;
+    background: #1e1e1e; /* خلفية داكنة */
 }
 .message {
     max-width: 75%;
     padding: 10px;
     margin: 5px;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 14px; /* حجم خط أصغر */
     word-wrap: break-word;
 }
 .sent {
@@ -60,24 +61,28 @@ body {
 }
 .received {
     align-self: flex-start;
-    background: #e9ecef;
+    background: #333333; /* خلفية داكنة للرسائل الواردة */
+    color: white;
 }
 .chat-input-container {
     display: flex;
     padding: 10px;
-    background: white;
-    border-top: 1px solid #ccc;
+    background: #1e1e1e; /* خلفية داكنة */
+    border-top: 1px solid #444; /* لون حدود داكن */
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
+    box-sizing: border-box;
 }
 .chat-input {
     flex: 1;
     padding: 12px;
     border-radius: 20px;
-    border: 1px solid #ccc;
-    font-size: 16px;
+    border: 1px solid #444; /* لون حدود داكن */
+    font-size: 14px; /* حجم خط أصغر */
+    background: #333333; /* خلفية داكنة */
+    color: white; /* نص أبيض */
 }
 .send-btn {
     margin-left: 10px;
@@ -87,20 +92,20 @@ body {
     color: white;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 16px; /* حجم خط أصغر */
 }
 .send-btn i {
-    font-size: 18px;
+    font-size: 16px; /* حجم خط أصغر */
 }
 @media (max-width: 600px) {
     .chat-box {
         padding: 10px;
     }
     .message {
-        font-size: 14px;
+        font-size: 12px; /* حجم خط أصغر للهواتف */
     }
     .chat-input {
-        font-size: 14px;
+        font-size: 12px; /* حجم خط أصغر للهواتف */
     }
 }
 </style>
