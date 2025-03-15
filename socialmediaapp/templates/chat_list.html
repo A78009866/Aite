@@ -10,10 +10,8 @@
 
     .container {
         margin-top: 60px; /* تعويض النافبار الثابت */
-        padding: 15px;
-        max-width: 600px; /* تحديد عرض الصفحة */
-        margin-left: auto;
-        margin-right: auto;
+        padding: 0; /* إزالة الحواف الداخلية */
+        width: 100%; /* جعل العرض يأخذ الشاشة بالكامل */
     }
 
     h2 {
@@ -21,6 +19,9 @@
         margin-bottom: 20px;
         text-align: center;
         font-size: 24px; /* حجم أكبر للعنوان */
+        padding: 15px; /* إضافة حواف للعنوان */
+        background-color: #ffffff; /* خلفية بيضاء للعنوان */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* ظل خفيف */
     }
 
     /* ✅ تصميم قائمة المستخدمين */
@@ -32,7 +33,6 @@
 
     .user-item {
         background-color: #ffffff;
-        border-radius: 10px;
         padding: 15px;
         margin-bottom: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -92,12 +92,11 @@
     @media (max-width: 768px) {
         .container {
             margin-top: 50px; /* تقليل الهامش العلوي */
-            padding: 10px;
-            max-width: 100%; /* جعل العرض يأخذ الشاشة بالكامل */
         }
 
         h2 {
             font-size: 20px; /* حجم أصغر للعنوان على الهواتف */
+            padding: 10px; /* تقليل الحواف */
         }
 
         .user-item {
