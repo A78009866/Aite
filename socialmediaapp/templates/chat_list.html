@@ -83,6 +83,9 @@
         text-decoration: none;
         font-size: 14px; /* حجم أكبر للزر */
         transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px; /* مسافة بين الأيقونة والنص */
     }
 
     .user-item .send-message-btn:hover {
@@ -136,7 +139,10 @@
                         <h6>{{ user.username }}</h6>
                         <small>{{ user.email }}</small>
                     </div>
-                    <a href="{% url 'chat' user.username %}" class="send-message-btn">إرسال رسالة</a>
+                    <a href="{% url 'chat' user.username %}" class="send-message-btn">
+                        <i class="fas fa-paper-plane"></i> <!-- أيقونة الإرسال -->
+                        إرسال رسالة
+                    </a>
                 </div>
             </li>
         {% empty %}
