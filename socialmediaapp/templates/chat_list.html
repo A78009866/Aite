@@ -6,6 +6,7 @@
         background-color: #f0f2f5;
         margin: 0;
         padding: 0;
+        overflow-y: auto; /* إضافة شريط التمرير */
     }
 
     .container {
@@ -33,8 +34,8 @@
 
     .user-item {
         background-color: #ffffff;
-        padding: 15px;
-        margin-bottom: 10px;
+        padding: 15px; /* زيادة الحواف */
+        margin-bottom: 10px; /* زيادة المسافة بين العناصر */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -52,10 +53,10 @@
     }
 
     .user-item img {
-        width: 50px;
-        height: 50px;
+        width: 60px; /* تكبير حجم الصورة */
+        height: 60px;
         border-radius: 50%;
-        margin-right: 15px;
+        margin-right: 15px; /* زيادة المسافة */
         object-fit: cover;
     }
 
@@ -65,22 +66,22 @@
 
     .user-item .user-info h6 {
         margin: 0;
-        font-size: 16px;
+        font-size: 18px; /* حجم أكبر للنص */
         font-weight: 600;
     }
 
     .user-item .user-info small {
         color: #777;
-        font-size: 14px;
+        font-size: 14px; /* حجم أكبر للنص */
     }
 
     .user-item .send-message-btn {
         background-color: #007bff;
         color: white;
-        padding: 8px 12px;
+        padding: 10px 15px; /* تكبير حجم الزر */
         border-radius: 5px;
         text-decoration: none;
-        font-size: 14px;
+        font-size: 14px; /* حجم أكبر للزر */
         transition: background-color 0.3s;
     }
 
@@ -95,48 +96,31 @@
         }
 
         h2 {
-            font-size: 20px; /* حجم أصغر للعنوان على الهواتف */
-            padding: 10px; /* تقليل الحواف */
+            font-size: 22px; /* حجم أكبر للعنوان على الهواتف */
+            padding: 12px; /* زيادة الحواف */
         }
 
         .user-item {
-            padding: 10px;
+            padding: 12px; /* زيادة الحواف */
         }
 
         .user-item img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
+            width: 50px; /* تكبير حجم الصورة أكثر */
+            height: 50px;
+            margin-right: 12px; /* زيادة المسافة */
         }
 
         .user-item .user-info h6 {
-            font-size: 14px; /* حجم أصغر للنص على الهواتف */
+            font-size: 16px; /* حجم أكبر للنص على الهواتف */
         }
 
         .user-item .user-info small {
-            font-size: 12px; /* حجم أصغر للنص على الهواتف */
+            font-size: 13px; /* حجم أكبر للنص على الهواتف */
         }
 
         .user-item .send-message-btn {
-            padding: 6px 10px;
-            font-size: 12px; /* حجم أصغر للزر على الهواتف */
-        }
-    }
-
-    /* ✅ تحسينات إضافية للهواتف */
-    @media (max-width: 480px) {
-        .user-item {
-            flex-direction: row; /* إبقاء العناصر في صف واحد */
-            align-items: center;
-        }
-
-        .user-item img {
-            margin-bottom: 0; /* إزالة الهامش السفلي */
-        }
-
-        .user-item .send-message-btn {
-            width: auto; /* عرض تلقائي للزر */
-            margin-top: 0; /* إزالة الهامش العلوي */
+            padding: 8px 12px; /* تكبير حجم الزر أكثر */
+            font-size: 13px; /* حجم أكبر للزر على الهواتف */
         }
     }
 </style>
