@@ -1,199 +1,206 @@
-{% block content %}
-<div class="chat-container">
-    <div class="chat-header">
-        <h3 class="chat-title">محادثة مع {{ other_user.username }}</h3>
-    </div>
-    <div id="chat-box" class="chat-box">
-        {% for message in messages %}
-            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
-            </div>
-        {% endfor %}
-    </div>
-    <div class="chat-input-container">
-        <input type="text" id="message-input" class="chat-input" placeholder="اكتب رسالة..." autocomplete="off">
-        <button id="send-btn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
-
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background: #121212; /* خلفية داكنة */
-    color: #ffffff; /* نص أبيض */
-}
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    max-width: 100%;
-    background: #1e1e1e; /* خلفية داكنة */
-}
-.chat-header {
-    padding: 15px;
-    background: #007bff;
-    color: white;
-    text-align: center;
-    font-size: 18px;
-}
-.chat-box {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    background: #1e1e1e; /* خلفية داكنة */
-}
-.message {
-    max-width: 75%;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 10px;
-    font-size: 14px; /* حجم خط أصغر */
-    word-wrap: break-word;
-}
-.sent {
-    align-self: flex-end;
-    background: #007bff;
-    color: white;
-}
-.received {
-    align-self: flex-start;
-    background: #333333; /* خلفية داكنة للرسائل الواردة */
-    color: white;
-}
-.chat-input-container {
-    display: flex;
-    padding: 10px;
-    background: #1e1e1e; /* خلفية داكنة */
-    border-top: 1px solid #444; /* لون حدود داكن */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-.chat-input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 20px;
-    border: 1px solid #444; /* لون حدود داكن */
-    font-size: 14px; /* حجم خط أصغر */
-    background: #333333; /* خلفية داكنة */
-    color: white; /* نص أبيض */
-}
-.send-btn {
-    margin-left: 10px;
-    padding: 12px 15px;
-    border: none;
-    background: #007bff;
-    color: white;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px; /* حجم خط أصغر */
-}
-.send-btn i {
-    font-size: 16px; /* حجم خط أصغر */
-}
-@media (max-width: 600px) {
-    .chat-box {
-        padding: 10px;
-    }
-    .message {
-        font-size: 12px; /* حجم خط أصغر للهواتف */
-    }
-    .chat-input {
-        font-size: 12px; /* حجم خط أصغر للهواتف */
-    }
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    let chatBox = document.getElementById("chat-box");
-    let messageInput = document.getElementById("message-input");
-    let sendButton = document.getElementById("send-btn");
-    let otherUser = "{{ other_user.username }}";
-    let lastMessageId = 0;
-
-    function fetchMessages() {
-        fetch(`/chat/${otherUser}/get-messages/`)
-        .then(response => response.json())
-        .then(messages => {
-            chatBox.innerHTML = "";
-            messages.forEach(msg => {
-                addMessageToChat(msg, false);
-                lastMessageId = msg.id;
-            });
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    }
-
-    function sendMessage() {
-        let message = messageInput.value.trim();
-        if (!message) return;
-
-        fetch("{% url 'send_message' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({receiver: otherUser, content: message})
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.error) {
-                addMessageToChat(data, true);
-                messageInput.value = "";
-                chatBox.scrollTop = chatBox.scrollHeight;
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>محادثة</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #ffffff;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 100%;
+            background: #1e1e1e;
+        }
+        .chat-header {
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+        }
+        .chat-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+        .message {
+            max-width: 75%;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+        .sent {
+            align-self: flex-end;
+            background: #007bff;
+            color: white;
+        }
+        .received {
+            align-self: flex-start;
+            background: #333333;
+            color: white;
+        }
+        .chat-input-container {
+            display: flex;
+            padding: 10px;
+            background: #1e1e1e;
+            border-top: 1px solid #444;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            font-size: 14px;
+            background: #333333;
+            color: white;
+        }
+        .send-btn {
+            margin-left: 10px;
+            padding: 12px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .send-btn i {
+            font-size: 16px;
+        }
+        @media (max-width: 600px) {
+            .chat-box {
+                padding: 10px;
             }
-        });
-    }
-
-    function addMessageToChat(msg, isNew) {
-        let messageDiv = document.createElement("div");
-        messageDiv.classList.add("message");
-        if (msg.sender === "{{ request.user.username }}") {
-            messageDiv.classList.add("sent");
-        } else {
-            messageDiv.classList.add("received");
+            .message {
+                font-size: 12px;
+            }
+            .chat-input {
+                font-size: 12px;
+            }
         }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3 class="chat-title">محادثة مع {{ other_user.username }}</h3>
+        </div>
+        <div id="chat-box" class="chat-box">
+            {% for message in messages %}
+                <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                    <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="message-input" class="chat-input" placeholder="اكتب رسالة..." autocomplete="off">
+            <button id="send-btn" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
-        messageDiv.innerHTML = `<p><strong>${msg.sender}:</strong> ${msg.content}</p>`;
-        chatBox.appendChild(messageDiv);
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let chatBox = document.getElementById("chat-box");
+            let messageInput = document.getElementById("message-input");
+            let sendButton = document.getElementById("send-btn");
+            let otherUser = "{{ other_user.username }}";
+            let lastMessageId = 0;
 
-        if (isNew) {
-            lastMessageId = msg.id;
-        }
-    }
+            function fetchMessages() {
+                fetch(`/chat/${otherUser}/get-messages/`)
+                .then(response => response.json())
+                .then(messages => {
+                    chatBox.innerHTML = "";
+                    messages.forEach(msg => {
+                        addMessageToChat(msg, false);
+                        lastMessageId = msg.id;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+            }
 
-    function fetchNewMessages() {
-        fetch(`/chat/${otherUser}/get-messages/`)
-        .then(response => response.json())
-        .then(messages => {
-            messages.forEach(msg => {
-                if (msg.id > lastMessageId) {
-                    addMessageToChat(msg, true);
+            function sendMessage() {
+                let message = messageInput.value.trim();
+                if (!message) return;
+
+                fetch("{% url 'send_message' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({receiver: otherUser, content: message})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        addMessageToChat(data, true);
+                        messageInput.value = "";
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+            }
+
+            function addMessageToChat(msg, isNew) {
+                let messageDiv = document.createElement("div");
+                messageDiv.classList.add("message");
+                if (msg.sender === "{{ request.user.username }}") {
+                    messageDiv.classList.add("sent");
+                } else {
+                    messageDiv.classList.add("received");
+                }
+
+                messageDiv.innerHTML = `<p><strong>${msg.sender}:</strong> ${msg.content}</p>`;
+                chatBox.appendChild(messageDiv);
+
+                if (isNew) {
                     lastMessageId = msg.id;
                 }
+            }
+
+            function fetchNewMessages() {
+                fetch(`/chat/${otherUser}/get-messages/`)
+                .then(response => response.json())
+                .then(messages => {
+                    messages.forEach(msg => {
+                        if (msg.id > lastMessageId) {
+                            addMessageToChat(msg, true);
+                            lastMessageId = msg.id;
+                        }
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+            }
+
+            sendButton.addEventListener("click", sendMessage);
+            messageInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    sendMessage();
+                }
             });
-            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setInterval(fetchNewMessages, 3000);
+            fetchMessages();
         });
-    }
-
-    sendButton.addEventListener("click", sendMessage);
-    messageInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
-
-    setInterval(fetchNewMessages, 3000);
-    fetchMessages();
-});
-</script>
-{% endblock %}
+    </script>
+</body>
+</html>
