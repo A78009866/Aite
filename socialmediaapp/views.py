@@ -281,3 +281,37 @@ def get_messages(request, username):
         }
         for msg in messages
     ], safe=False)
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+@login_required
+def chat_list(request, username):
+    # جلب جميع المستخدمين ما عدا المستخدم الحالي
+    all_users = User.objects.exclude(id=request.user.id)
+    
+    context = {
+        'all_users': all_users,  # إرسال جميع المستخدمين إلى القالب
+    }
+    return render(request, 'chat_list.html', context)
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+@login_required
+def chat(request, username):
+    # جلب المستخدم الذي تريد المحادثة معه
+    other_user = get_object_or_404(User, username=username)
+    
+    context = {
+        'other_user': other_user,
+    }
+    return render(request, 'chat.html', context)

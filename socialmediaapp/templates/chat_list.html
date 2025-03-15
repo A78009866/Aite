@@ -1,0 +1,138 @@
+
+{% block content %}
+<style>
+    /* ✅ تصميم عام للصفحة */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        margin-top: 80px; /* تعويض النافبار الثابت */
+        padding: 20px;
+    }
+
+    h2 {
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* ✅ تصميم قائمة المستخدمين */
+    .user-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .user-item {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .user-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-item a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+    }
+
+    .user-item img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+
+    .user-item .user-info {
+        flex: 1;
+    }
+
+    .user-item .user-info h6 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .user-item .user-info small {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .user-item .send-message-btn {
+        background-color: #007bff;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .user-item .send-message-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* ✅ تصميم للهواتف */
+    @media (max-width: 768px) {
+        .container {
+            margin-top: 60px;
+            padding: 10px;
+        }
+
+        .user-item {
+            padding: 10px;
+        }
+
+        .user-item img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .user-item .user-info h6 {
+            font-size: 14px;
+        }
+
+        .user-item .user-info small {
+            font-size: 12px;
+        }
+
+        .user-item .send-message-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="container">
+    <h2>قائمة المستخدمين</h2>
+    <ul class="user-list">
+        {% for user in all_users %}
+            <li class="user-item">
+                <div class="d-flex align-items-center">
+                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
+                    <div class="user-info">
+                        <h6>{{ user.username }}</h6>
+                        <small>{{ user.email }}</small>
+                    </div>
+                    <a href="{% url 'chat' user.username %}" class="send-message-btn">إرسال رسالة</a>
+                </div>
+            </li>
+        {% empty %}
+            <p>لا توجد مستخدمين آخرين.</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

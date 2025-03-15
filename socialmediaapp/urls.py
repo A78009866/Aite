@@ -24,6 +24,7 @@ urlpatterns = [
     path("chat/<str:username>/", views.chat_view, name="chat"),
     path("send-message/", views.send_message, name="send_message"),
     path("chat/<str:username>/get-messages/", views.get_messages, name="get_messages"),
+    path('chat/list/<str:username>/', views.chat_list, name='chat_list'),  # يتوقع وسيطة username
 
 ]
 

@@ -66,3 +66,14 @@ class Message(models.Model):
 
     def __str__(self):
         return f"من {self.sender} إلى {self.receiver}: {self.content[:30]}"
+
+from django.db import models
+from django.conf import settings
+
+class Chat(models.Model):
+    participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='chats')  # related_name='chats'
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_message = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Chat {self.id}"
