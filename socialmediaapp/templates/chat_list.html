@@ -11,6 +11,9 @@
     .container {
         margin-top: 60px; /* تعويض النافبار الثابت */
         padding: 15px;
+        max-width: 600px; /* تحديد عرض الصفحة */
+        margin-left: auto;
+        margin-right: auto;
     }
 
     h2 {
@@ -90,6 +93,7 @@
         .container {
             margin-top: 50px; /* تقليل الهامش العلوي */
             padding: 10px;
+            max-width: 100%; /* جعل العرض يأخذ الشاشة بالكامل */
         }
 
         h2 {
@@ -123,18 +127,17 @@
     /* ✅ تحسينات إضافية للهواتف */
     @media (max-width: 480px) {
         .user-item {
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row; /* إبقاء العناصر في صف واحد */
+            align-items: center;
         }
 
         .user-item img {
-            margin-bottom: 10px;
+            margin-bottom: 0; /* إزالة الهامش السفلي */
         }
 
         .user-item .send-message-btn {
-            width: 100%;
-            text-align: center;
-            margin-top: 10px;
+            width: auto; /* عرض تلقائي للزر */
+            margin-top: 0; /* إزالة الهامش العلوي */
         }
     }
 </style>
