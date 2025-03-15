@@ -119,5 +119,69 @@
             window.location.href = "/profile/{{ other_user.username }}";
         }
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const chatBox = document.getElementById("chat-box");
+            const messageInput = document.getElementById("message-input");
+            const sendButton = document.getElementById("send-btn");
+    
+            function sendMessage() {
+                const messageText = messageInput.value.trim();
+                if (!messageText) return;
+    
+                // إنشاء عنصر رسالة جديدة
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add("message", "sent");
+                messageDiv.innerHTML = `<p><strong>أنت:</strong> ${messageText}</p>`;
+                chatBox.appendChild(messageDiv);
+    
+                // تمرير المحتوى للأسفل تلقائيًا
+                chatBox.scrollTop = chatBox.scrollHeight;
+    
+                // إرسال الرسالة إلى السيرفر (إذا كنت تستخدم Django)
+                fetch("/send_message/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCSRFToken(),
+                    },
+                    body: JSON.stringify({ message: messageText })
+                }).then(response => response.json())
+                  .then(data => console.log("تم الإرسال:", data))
+                  .catch(error => console.error("خطأ في الإرسال:", error));
+    
+                // مسح حقل الإدخال
+                messageInput.value = "";
+            }
+    
+            // تشغيل الإرسال عند الضغط على الزر
+            sendButton.addEventListener("click", sendMessage);
+    
+            // تشغيل الإرسال عند الضغط على زر Enter
+            messageInput.addEventListener("keypress", function (event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+    
+            // دالة للحصول على CSRF Token (مهمة في Django)
+            function getCSRFToken() {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith("csrftoken=")) {
+                            cookieValue = cookie.substring("csrftoken=".length, cookie.length);
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+        });
+    </script>
+    
 </body>
 </html>
