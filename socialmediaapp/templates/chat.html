@@ -9,22 +9,23 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: #121212;
-            color: #ffffff;
+            background: #f0f2f5; /* لون خلفية Messenger */
+            color: #000000;
         }
         .chat-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
             max-width: 100%;
-            background: #1e1e1e;
+            background: #f0f2f5;
         }
         .chat-header {
             padding: 15px;
-            background: #007bff;
+            background: #007bff; /* لون هيدر Messenger */
             color: white;
             text-align: center;
             font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .chat-box {
             flex-grow: 1;
@@ -32,46 +33,51 @@
             padding: 15px;
             display: flex;
             flex-direction: column;
-            background: #1e1e1e;
+            background: #f0f2f5;
             padding-bottom: 80px; /* مساحة إضافية */
         }
         .message {
             max-width: 75%;
-            padding: 10px;
+            padding: 10px 15px;
             margin: 5px;
-            border-radius: 10px;
+            border-radius: 20px;
             font-size: 14px;
             word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* ظلال للرسائل */
         }
         .sent {
             align-self: flex-end;
-            background: #007bff;
+            background: #007bff; /* لون فقاعات الرسائل المرسلة */
             color: white;
+            border-bottom-right-radius: 5px; /* جعل الفقاعة مستديرة أكثر */
         }
         .received {
             align-self: flex-start;
-            background: #333333;
-            color: white;
+            background: #ffffff; /* لون فقاعات الرسائل المستلمة */
+            color: #000000;
+            border-bottom-left-radius: 5px; /* جعل الفقاعة مستديرة أكثر */
         }
         .chat-input-container {
             display: flex;
             padding: 10px;
-            background: #1e1e1e;
-            border-top: 1px solid #444;
-            position: absolute; /* تغيير من fixed إلى absolute */
+            background: #ffffff;
+            border-top: 1px solid #e4e6eb;
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             box-sizing: border-box;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* ظل لحقل الإدخال */
         }
         .chat-input {
             flex: 1;
             padding: 12px;
             border-radius: 20px;
-            border: 1px solid #444;
+            border: 1px solid #e4e6eb;
             font-size: 14px;
-            background: #333333;
-            color: white;
+            background: #ffffff;
+            color: #000000;
+            outline: none;
         }
         .send-btn {
             margin-left: 10px;
@@ -82,6 +88,7 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* ظل للزر */
         }
         .send-btn i {
             font-size: 16px;
