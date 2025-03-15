@@ -21,6 +21,9 @@ urlpatterns = [
     path("search/", search_view, name="search"),
     path("post/<int:post_id>/", post_detail, name="post_detail"),
     path('change-password/', views.custom_password_change, name='custom_password_change'),
+    path("chat/<str:username>/", views.chat_view, name="chat"),
+    path("send-message/", views.send_message, name="send_message"),
+    path("chat/<str:username>/get-messages/", views.get_messages, name="get_messages"),
 
 ]
 

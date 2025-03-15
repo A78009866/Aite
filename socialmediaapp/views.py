@@ -214,3 +214,70 @@ def custom_password_change(request):
         form = CustomPasswordChangeForm(user=request.user)
 
     return render(request, 'custom_password_change.html', {'form': form})
+
+
+from .models import Message
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+import json
+
+@login_required
+def chat_view(request, username):
+    other_user = get_object_or_404(User, username=username)
+    messages = Message.objects.filter(
+        sender__in=[request.user, other_user], 
+        receiver__in=[request.user, other_user]
+    ).order_by("timestamp")
+
+    return render(request, "chat.html", {"messages": messages, "other_user": other_user})
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Message, CustomUser
+import json
+from django.db import models
+
+@login_required
+def send_message(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        receiver = get_object_or_404(CustomUser, username=data["receiver"])
+        content = data["content"].strip()
+
+        if not content:  # تجنب إرسال رسائل فارغة
+            return JsonResponse({"error": "لا يمكن إرسال رسالة فارغة"}, status=400)
+
+        message = Message.objects.create(sender=request.user, receiver=receiver, content=content)
+
+        return JsonResponse({
+            "id": message.id,
+            "sender": message.sender.username,
+            "receiver": receiver.username,
+            "content": message.content,
+            "timestamp": message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        })
+
+    return JsonResponse({"error": "طلب غير صالح"}, status=400)
+
+
+@login_required
+def get_messages(request, username):
+    """جلب الرسائل بين المستخدم الحالي والمستخدم الآخر"""
+    other_user = get_object_or_404(CustomUser, username=username)
+    
+    messages = Message.objects.filter(
+        (models.Q(sender=request.user, receiver=other_user) | 
+         models.Q(sender=other_user, receiver=request.user))
+    ).order_by("timestamp")
+
+    return JsonResponse([
+        {
+            "id": msg.id,
+            "sender": msg.sender.username,
+            "receiver": msg.receiver.username,
+            "content": msg.content,
+            "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for msg in messages
+    ], safe=False)

@@ -350,6 +350,10 @@
                                     </a>
                                 </h6>
                                 <small class="text-muted">{{ post.created_at }}</small>
+                                <a href="{% url 'chat' post.user.username %}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-comments"></i> دردشة
+                                </a>
+                                
                             </div>
                             {% if post.user == request.user %}
                                 <form method="POST" action="{% url 'delete_post' post.id %}" class="ms-auto">

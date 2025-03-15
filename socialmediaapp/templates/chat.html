@@ -1,0 +1,171 @@
+{% block content %}
+<div class="container mt-4 chat-container">
+    <h3 class="chat-title">محادثة مع {{ other_user.username }}</h3>
+    <div id="chat-box" class="chat-box">
+        {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                <p><strong>{{ message.sender.username }}:</strong> {{ message.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="chat-input-container">
+        <input type="text" id="message-input" class="chat-input" placeholder="اكتب رسالة..." autocomplete="off">
+        <button id="send-btn" class="send-btn">إرسال</button>
+    </div>
+</div>
+
+<style>
+.chat-container {
+    max-width: 600px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+.chat-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+.chat-box {
+    height: 400px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.message {
+    max-width: 70%;
+    padding: 8px;
+    margin: 5px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+.sent {
+    align-self: flex-end;
+    background: #007bff;
+    color: white;
+}
+.received {
+    align-self: flex-start;
+    background: #e9ecef;
+}
+.chat-input-container {
+    display: flex;
+    margin-top: 10px;
+}
+.chat-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+.send-btn {
+    margin-left: 10px;
+    padding: 8px 15px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+@media (max-width: 600px) {
+    .chat-box {
+        height: 350px;
+    }
+    .message {
+        font-size: 12px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let chatBox = document.getElementById("chat-box");
+    let messageInput = document.getElementById("message-input");
+    let sendButton = document.getElementById("send-btn");
+    let otherUser = "{{ other_user.username }}";
+    let lastMessageId = 0;
+
+    function fetchMessages() {
+        fetch(`/chat/${otherUser}/get-messages/`)
+        .then(response => response.json())
+        .then(messages => {
+            chatBox.innerHTML = "";
+            messages.forEach(msg => {
+                addMessageToChat(msg, false);
+                lastMessageId = msg.id;
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+
+    function sendMessage() {
+        let message = messageInput.value.trim();
+        if (!message) return;
+
+        fetch("{% url 'send_message' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({receiver: otherUser, content: message})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.error) {
+                addMessageToChat(data, true);
+                messageInput.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+    }
+
+    function addMessageToChat(msg, isNew) {
+        let messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        if (msg.sender === "{{ request.user.username }}") {
+            messageDiv.classList.add("sent");
+        } else {
+            messageDiv.classList.add("received");
+        }
+
+        messageDiv.innerHTML = `<p><strong>${msg.sender}:</strong> ${msg.content}</p>`;
+        chatBox.appendChild(messageDiv);
+
+        if (isNew) {
+            lastMessageId = msg.id;
+        }
+    }
+
+    function fetchNewMessages() {
+        fetch(`/chat/${otherUser}/get-messages/`)
+        .then(response => response.json())
+        .then(messages => {
+            messages.forEach(msg => {
+                if (msg.id > lastMessageId) {
+                    addMessageToChat(msg, true);
+                    lastMessageId = msg.id;
+                }
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+    setInterval(fetchNewMessages, 3000);
+    fetchMessages();
+});
+</script>
+{% endblock %}
