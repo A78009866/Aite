@@ -107,6 +107,32 @@
 .statistics small {
     color: #6c757d;
 }
+
+.btn-follow {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-unfollow {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-follow:hover {
+    background-color: #0056b3;
+}
+
+.btn-unfollow:hover {
+    background-color: #c82333;
+}
     </style>
 </head>
 <body>
@@ -115,9 +141,116 @@
             <div class="card-body text-center">
                 <img src="{{ user.profile_picture.url }}" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;"
                      onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
-                <h4>{{ user.username }}</h4>
+                <h4>{{ user.username }}</h4> {% if request.user != user %}
+                <div class="text-center mt-3" id="follow-section">
+                    {% if is_following %}
+                        <button id="unfollow-btn" class="btn btn-danger">إلغاء المتابعة</button>
+                    {% else %}
+                        <button id="follow-btn" class="btn btn-primary">متابعة</button>
+                    {% endif %}
+                </div>
+            {% endif %}
                 <p class="text-muted">Joined on: {{ user.date_joined|date:"Y-m-d" }}</p>
+                <div class="mt-4">
+                    <div class="d-flex justify-content-around">
+                        <div class="text-center">
+                            <p class="mb-0"><strong id="followers-count">{{ user.followers.count }}</strong></p>
+                            <small class="text-muted">المتابعون</small>
+                        </div>
+                        <div class="text-center">
+                            <p class="mb-0"><strong>{{ user.following.count }}</strong></p>
+                            <small class="text-muted">المتابَعون</small>
+                        </div>
+                    </div>
+                    
+                </div>
                 
+                
+                <script>
+                   document.addEventListener("DOMContentLoaded", function() {
+    const followBtn = document.getElementById("follow-btn");
+    const unfollowBtn = document.getElementById("unfollow-btn");
+    const followersCount = document.getElementById("followers-count");
+    const followSection = document.getElementById("follow-section");
+
+    if (followBtn) {
+        followBtn.addEventListener("click", function() {
+            followUser("{{ user.username }}");
+        });
+    }
+
+    if (unfollowBtn) {
+        unfollowBtn.addEventListener("click", function() {
+            unfollowUser("{{ user.username }}");
+        });
+    }
+
+    function followUser(username) {
+        fetch(`/follow/${username}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                followSection.innerHTML = `
+                    <button id="unfollow-btn" class="btn btn-danger">إلغاء المتابعة</button>
+                `;
+                followersCount.textContent = data.followers_count;
+                document.getElementById("unfollow-btn").addEventListener("click", function() {
+                    unfollowUser(username);
+                });
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function unfollowUser(username) {
+        fetch(`/unfollow/${username}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                followSection.innerHTML = `
+                    <button id="follow-btn" class="btn btn-primary">متابعة</button>
+                `;
+                followersCount.textContent = data.followers_count;
+                document.getElementById("follow-btn").addEventListener("click", function() {
+                    followUser(username);
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+                </script>
                 <!-- زر تعديل البروفايل يظهر فقط لصاحب البروفايل -->
                 {% if request.user == user %}
                     <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3"> تعديل البروفايل</a>
@@ -129,24 +262,8 @@
                 {% endif %}
                 <a href="{% url 'home' %}" class="btn btn-secondary mt-3"> العودة للصفحة الرئيسية</a>
 
-                <div class="mt-4">
-                    <h5 class="text-center">إحصائيات التفاعل</h5>
-                    <div class="d-flex justify-content-around">
-                        <div class="text-center">
-                            <p class="mb-0"><strong>{{ total_likes }}</strong></p>
-                            <small class="text-muted">الإعجابات</small>
-                        </div>
-                        <div class="text-center">
-                            <p class="mb-0"><strong>{{ total_comments }}</strong></p>
-                            <small class="text-muted">التعليقات</small>
-                        </div>
-                        <div class="text-center">
-                            <p class="mb-0"><strong>{{ total_posts }}</strong></p>
-                            <small class="text-muted">المنشورات</small>
-                        </div>
-                    </div>
-                </div>
                 
+
                 <div class="mt-5">
                     <h3 class="text-center">منشورات {{ user.username }}</h3>
                     {% for post in posts %}

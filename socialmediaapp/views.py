@@ -52,8 +52,12 @@ from django.db.models import Count
 @login_required
 def home_view(request):
     posts = Post.objects.annotate(likes_count=Count('likers')).order_by('-likes_count', '-created_at')
+    
+    # إضافة حالة المتابعة لكل منشور
+    for post in posts:
+        post.is_following = Follow.objects.filter(follower=request.user, followed=post.user).exists()
+    
     return render(request, 'home.html', {'posts': posts})
-
 @login_required
 def post_create_view(request):
     if request.method == 'POST':
@@ -166,12 +170,14 @@ from .models import CustomUser as User
 def profile_view(request, username):
     user = get_object_or_404(User, username=username)
     posts = Post.objects.filter(user=user).order_by('-created_at')
+    
+    # التحقق مما إذا كان المستخدم الحالي يتابع المستخدم المعروض
+    is_following = Follow.objects.filter(follower=request.user, followed=user).exists()
+    
     return render(request, 'profile.html', {
         'user': user,
         'posts': posts,
-        'total_likes': user.total_likes,
-        'total_comments': user.total_comments,
-        'total_posts': user.total_posts,
+        'is_following': is_following,  # تمرير حالة المتابعة
     })
 from django.shortcuts import render
 
@@ -324,3 +330,25 @@ def chat(request, username):
         'other_user': other_user,
     }
     return render(request, 'chat.html', context)
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Follow, CustomUser as User
+from django.http import JsonResponse
+from django.http import JsonResponse
+
+@login_required
+def follow_user(request, username):
+    if request.method == 'POST':
+        user_to_follow = get_object_or_404(User, username=username)
+        if request.user != user_to_follow:
+            Follow.objects.get_or_create(follower=request.user, followed=user_to_follow)
+            return JsonResponse({'status': 'success', 'action': 'follow', 'followers_count': user_to_follow.followers.count()})
+        return JsonResponse({'status': 'error', 'message': 'لا يمكنك متابعة نفسك'}, status=400)
+
+@login_required
+def unfollow_user(request, username):
+    if request.method == 'POST':
+        user_to_unfollow = get_object_or_404(User, username=username)
+        Follow.objects.filter(follower=request.user, followed=user_to_unfollow).delete()
+        return JsonResponse({'status': 'success', 'action': 'unfollow', 'followers_count': user_to_unfollow.followers.count()})
