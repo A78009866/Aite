@@ -158,12 +158,21 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .forms import ProfileUpdateForm
 
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser as User
+
 @login_required
 def profile_view(request, username):
-    user = get_object_or_404(User, username=username)  # جلب المستخدم المطلوب
-    posts = Post.objects.filter(user=user).order_by('-created_at')  # جلب منشوراته فقط
-    return render(request, 'profile.html', {'user': user, 'posts': posts})
-
+    user = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(user=user).order_by('-created_at')
+    return render(request, 'profile.html', {
+        'user': user,
+        'posts': posts,
+        'total_likes': user.total_likes,
+        'total_comments': user.total_comments,
+        'total_posts': user.total_posts,
+    })
 from django.shortcuts import render
 
 def splash(request):

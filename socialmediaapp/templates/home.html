@@ -795,7 +795,15 @@ function moveFlower() {
         });
     });
 </script>
-
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".post-image-container").forEach(container => {
+            if (!container.querySelector("img")) {
+                container.style.display = "none";
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

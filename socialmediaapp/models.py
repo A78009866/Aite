@@ -39,9 +39,22 @@ class Comment(models.Model):
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from cloudinary.models import CloudinaryField
 
 class CustomUser(AbstractUser):
     profile_picture = CloudinaryField('image')
+
+    @property
+    def total_likes(self):
+        return sum(post.likers.count() for post in self.post_set.all())
+
+    @property
+    def total_comments(self):
+        return sum(post.comments.count() for post in self.post_set.all())
+
+    @property
+    def total_posts(self):
+        return self.post_set.count()
 
     groups = models.ManyToManyField(
         "auth.Group",
@@ -53,7 +66,6 @@ class CustomUser(AbstractUser):
         related_name="customuser_permissions_set",
         blank=True
     )
-    
   
 from django.db import models
 from django.conf import settings
