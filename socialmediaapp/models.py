@@ -9,8 +9,8 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, default="Untitled")
     image = CloudinaryField('image', default="https://res.cloudinary.com/your_cloud_name/image/upload/v1631234567/default_image.jpg", blank=True, null=True)
-    video = CloudinaryField('video', blank=True, null=True)  # إضافة حقل الفيديو
     likers = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='likes')
+    audio = models.FileField(upload_to="audio/", blank=True, null=True)  # ✅ حقل الصوت
 
     def __str__(self):
         return self.content[:20]
@@ -103,3 +103,5 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} يتابع {self.followed.username}"
+
+        

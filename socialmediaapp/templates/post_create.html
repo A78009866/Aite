@@ -78,6 +78,27 @@
             border-radius: 20px;
             color: #495057;
         }
+
+        #record-button, #stop-recording {
+    font-size: 16px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#record-button i, #stop-recording i {
+    margin-right: 5px;
+}
+
+#audio-preview {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#uploaded-audio-preview {
+    margin-top: 10px;
+    width: 100%;
+}
+
     </style>
 </head>
 <body>
@@ -97,7 +118,15 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="mb-3">
-                <textarea name="content" class="form-control" rows="4" placeholder="كتب كاش حاجة ..." required></textarea>
+                <textarea name="content" class="form-control" rows="4" placeholder="كتب كاش حاجة ..."></textarea>
+                <div class="mb-3">
+                    <label for="audio-upload" class="btn btn-outline-secondary">
+                        <i class="fas fa-upload"></i> رفع ملف صوتي
+                    </label>
+                    <input type="file" id="audio-upload" name="audio" accept="audio/*" class="d-none">
+                    <audio id="uploaded-audio-preview" controls class="d-none"></audio>
+                </div>
+                
             </div>
             <div class="mb-3">
                 <div class="file-input-wrapper">
@@ -111,9 +140,95 @@
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-paper-plane"></i> بعث
             </button>
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-primary" id="record-button">
+                    <i class="fas fa-microphone"></i> تسجيل الصوت
+                </button>
+                <button type="button" class="btn btn-outline-danger d-none" id="stop-recording">
+                    <i class="fas fa-stop"></i> إيقاف
+                </button>
+                <audio id="audio-preview" controls class="d-none"></audio>
+                <input type="file" id="audio-file" name="audio" accept="audio/*" hidden>
+            </div>
+            
         </form>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let recordButton = document.getElementById("record-button");
+            let stopButton = document.getElementById("stop-recording");
+            let audioPreview = document.getElementById("audio-preview");
+            let audioFileInput = document.getElementById("audio-file");
+        
+            let mediaRecorder;
+            let audioChunks = [];
+        
+            // التحقق من إذن الميكروفون عند تحميل الصفحة
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(() => console.log("🎤 إذن الميكروفون موجود."))
+                .catch(err => alert("⚠️ يرجى السماح باستخدام الميكروفون."));
+        
+            // عند الضغط على زر التسجيل
+            recordButton.addEventListener("click", async function () {
+                try {
+                    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];  // إعادة ضبط التخزين عند بدء تسجيل جديد
+        
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+        
+                    mediaRecorder.onstop = () => {
+                        let audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+                        let audioUrl = URL.createObjectURL(audioBlob);
+                        audioPreview.src = audioUrl;
+                        audioPreview.classList.remove("d-none");
+        
+                        // تحويل التسجيل إلى ملف وإدخاله في input file
+                        let file = new File([audioBlob], "recording.mp3", { type: "audio/mp3" });
+                        let dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        audioFileInput.files = dataTransfer.files;
+                    };
+        
+                    mediaRecorder.start();
+                    recordButton.classList.add("d-none");
+                    stopButton.classList.remove("d-none");
+                } catch (error) {
+                    alert("⚠️ حدث خطأ أثناء محاولة تسجيل الصوت. الرجاء التأكد من أن الميكروفون يعمل.");
+                    console.error(error);
+                }
+            });
+        
+            // عند الضغط على زر الإيقاف
+            stopButton.addEventListener("click", function () {
+                if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                    mediaRecorder.stop();
+                    recordButton.classList.remove("d-none");
+                    stopButton.classList.add("d-none");
+                }
+            });
+        });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let audioUploadInput = document.getElementById("audio-upload");
+                let uploadedAudioPreview = document.getElementById("uploaded-audio-preview");
+            
+                // عند اختيار ملف صوتي من الجهاز
+                audioUploadInput.addEventListener("change", function () {
+                    if (this.files.length > 0) {
+                        let audioFile = this.files[0];
+                        let audioUrl = URL.createObjectURL(audioFile);
+                        uploadedAudioPreview.src = audioUrl;
+                        uploadedAudioPreview.classList.remove("d-none");
+                    }
+                });
+            });
+            </script>
+            
 </body>
 </html>

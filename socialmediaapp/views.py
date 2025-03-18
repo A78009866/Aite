@@ -58,14 +58,27 @@ def home_view(request):
         post.is_following = Follow.objects.filter(follower=request.user, followed=post.user).exists()
     
     return render(request, 'home.html', {'posts': posts})
-@login_required
-def post_create_view(request):
-    if request.method == 'POST':
-        content = request.POST['content']
-        image = request.FILES.get('image')
-        post = Post.objects.create(user=request.user, content=content, image=image)
-        return redirect('home')
-    return render(request, 'post_create.html')
+
+from django.shortcuts import render, redirect
+from .models import Post
+
+def post_create(request):
+    if request.method == "POST":
+        content = request.POST.get("content", "").strip()
+        image = request.FILES.get("image")
+        audio = request.FILES.get("audio")  # ✅ استقبال ملف الصوت
+
+        # إذا لم يكن هناك نص أو صورة أو صوت، لا تقم بإنشاء المنشور
+        if not content and not image and not audio:
+            return render(request, "post_create.html", {"error": "يجب إضافة نص أو صورة أو صوت."})
+
+        post = Post(user=request.user, content=content, image=image, audio=audio)
+        post.save()
+
+        return redirect("home")
+
+    return render(request, "post_create.html")
+
 
 from django.http import JsonResponse
 
@@ -352,3 +365,5 @@ def unfollow_user(request, username):
         user_to_unfollow = get_object_or_404(User, username=username)
         Follow.objects.filter(follower=request.user, followed=user_to_unfollow).delete()
         return JsonResponse({'status': 'success', 'action': 'unfollow', 'followers_count': user_to_unfollow.followers.count()})
+
+        
