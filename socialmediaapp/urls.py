@@ -28,6 +28,8 @@ urlpatterns = [
     path('chat/list/<str:username>/', views.chat_list, name='chat_list'),  # يتوقع وسيطة username
     path('follow/<str:username>/', follow_user, name='follow_user'),
     path('unfollow/<str:username>/', unfollow_user, name='unfollow_user'),
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

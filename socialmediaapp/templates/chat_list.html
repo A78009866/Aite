@@ -1,152 +1,148 @@
 {% block content %}
 <style>
-    /* ✅ تصميم عام للصفحة */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f2f5;
+    /* ✅ ضبط الصفحة بالكامل */
+    html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
-        overflow-y: auto; /* إضافة شريط التمرير */
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
     }
 
-    .container {
-        margin-top: 60px; /* تعويض النافبار الثابت */
-        padding: 0; /* إزالة الحواف الداخلية */
-        width: 100%; /* جعل العرض يأخذ الشاشة بالكامل */
+    .chat-container {
+        width: 100%;
+        height: 100vh; /* ✅ يأخذ كل الشاشة */
+        display: flex;
+        flex-direction: column;
     }
 
-    h2 {
-        color: #333;
-        margin-bottom: 20px;
+    .chat-header {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 25px;
         text-align: center;
-        font-size: 24px; /* حجم أكبر للعنوان */
-        padding: 15px; /* إضافة حواف للعنوان */
-        background-color: #ffffff; /* خلفية بيضاء للعنوان */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* ظل خفيف */
+        font-size: 26px;
+        font-weight: bold;
+        flex-shrink: 0;
     }
 
-    /* ✅ تصميم قائمة المستخدمين */
     .user-list {
         list-style: none;
         padding: 0;
         margin: 0;
+        overflow-y: auto;
+        flex-grow: 1; /* ✅ يجعل القائمة تمتد */
     }
 
     .user-item {
-        background-color: #ffffff;
-        padding: 15px; /* زيادة الحواف */
-        margin-bottom: 10px; /* زيادة المسافة بين العناصر */
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        background-color: white;
+        padding: 20px;
+        margin: 8px;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        width: calc(98% - 16px); /* ✅ يجعلها تأخذ العرض بالكامل */
     }
 
     .user-item:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    }
-
-    .user-item a {
-        text-decoration: none;
-        color: #333;
-        display: flex;
-        align-items: center;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
     .user-item img {
-        width: 60px; /* تكبير حجم الصورة */
-        height: 60px;
+        width: 90px; /* ✅ تكبير الصورة */
+        height: 90px;
         border-radius: 50%;
-        margin-right: 15px; /* زيادة المسافة */
+        margin-right: 20px;
         object-fit: cover;
+        border: 3px solid #007bff;
     }
 
-    .user-item .user-info {
-        flex: 1;
+    .user-info {
+        flex-grow: 1;
     }
 
-    .user-item .user-info h6 {
+    .user-info h6 {
         margin: 0;
-        font-size: 18px; /* حجم أكبر للنص */
-        font-weight: 600;
+        font-size: 24px; /* ✅ تكبير الخط */
+        font-weight: bold;
+        color: #333;
     }
 
-    .user-item .user-info small {
-        color: #777;
-        font-size: 14px; /* حجم أكبر للنص */
+    .user-info small {
+        color: #666;
+        font-size: 18px;
     }
 
-    .user-item .send-message-btn {
+    .send-message-btn {
         background-color: #007bff;
         color: white;
-        padding: 10px 15px; /* تكبير حجم الزر */
-        border-radius: 5px;
+        padding: 16px 24px;
+        border-radius: 10px;
+        font-size: 22px;
         text-decoration: none;
-        font-size: 14px; /* حجم أكبر للزر */
-        transition: background-color 0.3s;
+        transition: background 0.3s;
         display: flex;
         align-items: center;
-        gap: 8px; /* مسافة بين الأيقونة والنص */
+        gap: 10px;
     }
 
-    .user-item .send-message-btn:hover {
+    .send-message-btn:hover {
         background-color: #0056b3;
     }
 
-    /* ✅ تصميم للهواتف */
+    /* ✅ تحسينات للهواتف */
     @media (max-width: 768px) {
-        .container {
-            margin-top: 50px; /* تقليل الهامش العلوي */
-        }
-
-        h2 {
-            font-size: 22px; /* حجم أكبر للعنوان على الهواتف */
-            padding: 12px; /* زيادة الحواف */
+        .chat-header {
+            font-size: 28px;
+            padding: 30px;
         }
 
         .user-item {
-            padding: 12px; /* زيادة الحواف */
+            padding: 25px;
+            margin: 6px;
+            width: calc(100% - 12px); /* ✅ امتداد كامل بدون فراغات */
         }
 
         .user-item img {
-            width: 50px; /* تكبير حجم الصورة أكثر */
-            height: 50px;
-            margin-right: 12px; /* زيادة المسافة */
+            width: 100px; /* ✅ أكبر للهواتف */
+            height: 100px;
         }
 
-        .user-item .user-info h6 {
-            font-size: 16px; /* حجم أكبر للنص على الهواتف */
+        .user-info h6 {
+            font-size: 26px;
         }
 
-        .user-item .user-info small {
-            font-size: 13px; /* حجم أكبر للنص على الهواتف */
+        .user-info small {
+            font-size: 20px;
         }
 
-        .user-item .send-message-btn {
-            padding: 8px 12px; /* تكبير حجم الزر أكثر */
-            font-size: 13px; /* حجم أكبر للزر على الهواتف */
+        .send-message-btn {
+            padding: 18px 28px;
+            font-size: 24px;
         }
     }
 </style>
 
-<div class="container">
-    <h2>قائمة المستخدمين</h2>
+<div class="chat-container">
+    <div class="chat-header">المحادثات</div>
     <ul class="user-list">
         {% for user in all_users %}
             <li class="user-item">
-                <div class="d-flex align-items-center">
-                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
-                    <div class="user-info">
-                        <h6>{{ user.username }}</h6>
-                        <small>{{ user.email }}</small>
-                    </div>
-                    <a href="{% url 'chat' user.username %}" class="send-message-btn">
-                        <i class="fas fa-paper-plane"></i> <!-- أيقونة الإرسال -->
-                        إرسال رسالة
-                    </a>
+                <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" 
+                     onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
+                <div class="user-info">
+                    <h6>{{ user.username }}</h6>
+                    <small>{{ user.email }}</small>
                 </div>
+                <a href="{% url 'chat' user.username %}" class="send-message-btn">
+                    <i class="fas fa-comments"></i> محادثة
+                </a>
             </li>
         {% empty %}
-            <p>لا توجد مستخدمين آخرين.</p>
+            <p style="text-align: center; font-size: 22px; color: #777;">لا توجد محادثات حتى الآن.</p>
         {% endfor %}
     </ul>
 </div>
