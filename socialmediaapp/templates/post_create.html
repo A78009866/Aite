@@ -193,7 +193,14 @@
                     audioPreview.src = audioUrl;
                     audioPreview.classList.remove("d-none");
     
-                    // حفظ التسجيل في input file
+                    // ✅ حفظ التسجيل في `localStorage`
+                    let reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = function () {
+                        localStorage.setItem("savedAudio", reader.result);
+                    };
+    
+                    // ✅ حفظ التسجيل في input file لرفعه للسيرفر
                     let file = new File([audioBlob], "recording.mp3", { type: "audio/mp3" });
                     let dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
@@ -204,7 +211,7 @@
                 recordButton.classList.add("d-none");
                 stopButton.classList.remove("d-none");
                 recordButton.innerHTML = '<i class="fas fa-microphone"></i> التسجيل...';
-                recordButton.style.backgroundColor = "red"; // تغيير لون الزر أثناء التسجيل
+                recordButton.style.backgroundColor = "red";
             });
     
             stopButton.addEventListener("click", function () {
@@ -216,6 +223,13 @@
                     recordButton.style.backgroundColor = "";
                 }
             });
+    
+            // ✅ استعادة التسجيل من `localStorage` عند إعادة تحميل الصفحة
+            let savedAudio = localStorage.getItem("savedAudio");
+            if (savedAudio) {
+                audioPreview.src = savedAudio;
+                audioPreview.classList.remove("d-none");
+            }
         });
     </script>
     
