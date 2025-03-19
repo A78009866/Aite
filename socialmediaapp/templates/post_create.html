@@ -161,58 +161,64 @@
             let stopButton = document.getElementById("stop-recording");
             let audioPreview = document.getElementById("audio-preview");
             let audioFileInput = document.getElementById("audio-file");
-        
+    
             let mediaRecorder;
             let audioChunks = [];
-        
-            // التحقق من إذن الميكروفون عند تحميل الصفحة
+    
+            // ✅ التحقق من إذن الميكروفون عند تحميل الصفحة
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(() => console.log("🎤 إذن الميكروفون موجود."))
-                .catch(err => alert("⚠️ يرجى السماح باستخدام الميكروفون."));
-        
-            // عند الضغط على زر التسجيل
+                .catch(err => alert("⚠️ يرجى السماح باستخدام الميكروفون لاستخدام هذه الميزة."));
+    
+            // ✅ عند الضغط على زر التسجيل
             recordButton.addEventListener("click", async function () {
                 try {
                     let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];  // إعادة ضبط التخزين عند بدء تسجيل جديد
-        
+                    audioChunks = [];
+    
                     mediaRecorder.ondataavailable = event => {
                         audioChunks.push(event.data);
                     };
-        
+    
                     mediaRecorder.onstop = () => {
                         let audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
                         let audioUrl = URL.createObjectURL(audioBlob);
                         audioPreview.src = audioUrl;
                         audioPreview.classList.remove("d-none");
-        
-                        // تحويل التسجيل إلى ملف وإدخاله في input file
+    
+                        // ✅ تحويل التسجيل إلى ملف وإدخاله في input file
                         let file = new File([audioBlob], "recording.mp3", { type: "audio/mp3" });
                         let dataTransfer = new DataTransfer();
                         dataTransfer.items.add(file);
                         audioFileInput.files = dataTransfer.files;
                     };
-        
+    
                     mediaRecorder.start();
                     recordButton.classList.add("d-none");
                     stopButton.classList.remove("d-none");
+                    recordButton.innerHTML = '<i class="fas fa-microphone"></i> التسجيل...';
+                    recordButton.style.backgroundColor = "red"; // 🔴 تغيير اللون أثناء التسجيل
+    
                 } catch (error) {
                     alert("⚠️ حدث خطأ أثناء محاولة تسجيل الصوت. الرجاء التأكد من أن الميكروفون يعمل.");
                     console.error(error);
                 }
             });
-        
-            // عند الضغط على زر الإيقاف
+    
+            // ✅ عند الضغط على زر الإيقاف
             stopButton.addEventListener("click", function () {
                 if (mediaRecorder && mediaRecorder.state !== "inactive") {
                     mediaRecorder.stop();
                     recordButton.classList.remove("d-none");
                     stopButton.classList.add("d-none");
+                    recordButton.innerHTML = '<i class="fas fa-microphone"></i> تسجيل الصوت';
+                    recordButton.style.backgroundColor = ""; // إعادة اللون الافتراضي
                 }
             });
         });
-        </script>
+    </script>
+    
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 let audioUploadInput = document.getElementById("audio-upload");
