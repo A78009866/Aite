@@ -346,31 +346,7 @@
             </div>
         </div>
     </nav>
-<!-- نافذة منبثقة لإنشاء المنشور -->
-<div id="create-post-modal" class="modal-overlay">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>صنع منشور جديد</h2>
-        <form method="POST" enctype="multipart/form-data" id="create-post-form">
-            {% csrf_token %}
-            <div class="mb-3">
-                <textarea name="content" class="form-control" rows="4" placeholder="كتب كاش حاجة ..." required></textarea>
-            </div>
-            <div class="mb-3">
-                <div class="file-input-wrapper">
-                    <button class="btn-file" type="button">
-                        <i class="fas fa-image"></i> دير فوطو
-                    </button>
-                    <input type="file" name="image" accept="image/*">
-                </div>
-                <small class="form-text text-muted">دخل الفوطو تاع المنشور تاعك</small>
-            </div>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i> بعث
-            </button>
-        </form>
-    </div>
-</div>
+
     <!-- ✅ محتوى الصفحة -->
     <div class="container content-container">
         <div class="row justify-content-center">

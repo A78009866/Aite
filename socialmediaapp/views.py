@@ -49,14 +49,22 @@ def logout_view(request):
 
 from django.db.models import Count
 
+import random
+from django.db.models import Count
+
 @login_required
 def home_view(request):
-    posts = Post.objects.annotate(likes_count=Count('likers')).order_by('-likes_count', '-created_at')
-    
-    # إضافة حالة المتابعة لكل منشور
-    for post in posts:
-        post.is_following = Follow.objects.filter(follower=request.user, followed=post.user).exists()
-    
+    # 1️⃣ جلب جميع المنشورات وتحويلها إلى قائمة
+    posts = list(Post.objects.all())
+
+    # 2️⃣ ترتيب المنشورات عشوائيًا
+    random.shuffle(posts)
+
+    # 3️⃣ جعل المنشورات الجديدة (من المستخدم) في الأعلى
+    if request.user.is_authenticated:
+        user_posts = list(Post.objects.filter(user=request.user).order_by('-created_at'))
+        posts = user_posts + [post for post in posts if post not in user_posts]
+
     return render(request, 'home.html', {'posts': posts})
 
 from django.shortcuts import render, redirect
@@ -372,4 +380,11 @@ def unfollow_user(request, username):
         Follow.objects.filter(follower=request.user, followed=user_to_unfollow).delete()
         return JsonResponse({'status': 'success', 'action': 'unfollow', 'followers_count': user_to_unfollow.followers.count()})
 
-        
+from django.shortcuts import redirect
+from django.utils.translation import activate
+
+def switch_language(request, lang_code):
+    if lang_code in ['ar', 'en']:  # السماح فقط باللغتين
+        request.session['django_language'] = lang_code
+        activate(lang_code)
+    return redirect(request.META.get('HTTP_REFERER', '/'))
