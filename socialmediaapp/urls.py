@@ -5,7 +5,7 @@ from django.conf import settings
 from .views import search_view, post_detail
 from django.contrib.auth import views as auth_views
 from .views import follow_user, unfollow_user
-from .views import switch_language
+from .views import change_profile_picture
 
 urlpatterns = [
     path('home/', views.home_view, name='home'),
@@ -13,13 +13,12 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('post/create/', views.post_create, name='post_create'),
-    path('switch-language/<str:lang_code>/', switch_language, name='switch_language'),
+    path('change-profile-picture/', change_profile_picture, name='change_profile_picture'),
 
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
     path('post/<int:id>/like/', views.like_post, name='like_post'),
     path('post/<int:id>/unlike/', views.unlike_post, name='unlike_post'),
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
-    path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('profile/<str:username>/', views.profile_view, name='profile'),
     path('splash/', views.splash, name='splash'),
     path("search/", search_view, name="search"),

@@ -170,20 +170,6 @@ def delete_post(request, post_id):
         post.delete()
     return redirect('home')
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import ProfileUpdateForm
-
-@login_required
-def edit_profile(request):
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('profile', username=request.user.username)  # ✅ تمرير اسم المستخدم
-    else:
-        form = ProfileUpdateForm(instance=request.user)
-    return render(request, 'edit_profile.html', {'form': form})
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -380,11 +366,22 @@ def unfollow_user(request, username):
         Follow.objects.filter(follower=request.user, followed=user_to_unfollow).delete()
         return JsonResponse({'status': 'success', 'action': 'unfollow', 'followers_count': user_to_unfollow.followers.count()})
 
-from django.shortcuts import redirect
-from django.utils.translation import activate
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+import cloudinary.uploader
 
-def switch_language(request, lang_code):
-    if lang_code in ['ar', 'en']:  # السماح فقط باللغتين
-        request.session['django_language'] = lang_code
-        activate(lang_code)
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+@login_required
+def change_profile_picture(request):
+    if request.method == "POST" and request.FILES.get("profile_picture"):
+        user = request.user
+        image = request.FILES["profile_picture"]
+
+        # ✅ رفع الصورة إلى Cloudinary
+        upload_result = cloudinary.uploader.upload(image)
+        user.profile_picture = upload_result["secure_url"]
+        user.save()
+
+        return JsonResponse({"success": True, "new_image_url": user.profile_picture})
+
+    return JsonResponse({"success": False, "error": "⚠️ لم يتم رفع الصورة."})
