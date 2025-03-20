@@ -129,6 +129,25 @@
                 
             </div>
             <div class="mb-3">
+                <label for="video-upload" class="btn btn-outline-secondary">
+                    <i class="fas fa-video"></i> رفع فيديو
+                </label>
+                <input type="file" id="video-upload" name="video" accept="video/*" class="d-none">
+                <video id="uploaded-video-preview" controls class="d-none"></video>
+            </div>
+            <script>
+                document.getElementById("video-upload").addEventListener("change", function () {
+                    let file = this.files[0];
+                    if (file) {
+                        let url = URL.createObjectURL(file);
+                        let preview = document.getElementById("uploaded-video-preview");
+                        preview.src = url;
+                        preview.classList.remove("d-none");
+                    }
+                });
+            </script>
+            
+            <div class="mb-3">
                 <div class="file-input-wrapper">
                     <button class="btn-file" type="button">
                         <i class="fas fa-image"></i> دير فوطو

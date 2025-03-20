@@ -11,6 +11,7 @@ class Post(models.Model):
     image = CloudinaryField('image', default="https://res.cloudinary.com/your_cloud_name/image/upload/v1631234567/default_image.jpg", blank=True, null=True)
     likers = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='likes')
     audio = models.FileField(upload_to="audio/", blank=True, null=True)  # ✅ حقل الصوت
+    video = CloudinaryField('video', resource_type="video", blank=True, null=True)  # ✅ الفيديو
 
     def __str__(self):
         return self.content[:20]

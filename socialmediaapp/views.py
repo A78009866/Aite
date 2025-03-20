@@ -61,18 +61,24 @@ def home_view(request):
 
 from django.shortcuts import render, redirect
 from .models import Post
+import cloudinary.uploader
 
 def post_create(request):
     if request.method == "POST":
         content = request.POST.get("content", "").strip()
         image = request.FILES.get("image")
-        audio = request.FILES.get("audio")  # ✅ استقبال ملف الصوت
+        audio = request.FILES.get("audio")
+        video = request.FILES.get("video")  # ✅ استقبال الفيديو
 
-        # إذا لم يكن هناك نص أو صورة أو صوت، لا تقم بإنشاء المنشور
-        if not content and not image and not audio:
-            return render(request, "post_create.html", {"error": "يجب إضافة نص أو صورة أو صوت."})
+        if video:
+            upload_result = cloudinary.uploader.upload(video, resource_type="video")  # ✅ رفع الفيديو كـ فيديو
+            video_url = upload_result.get("secure_url")
+        else:
+            video_url = None
+        if not content and not image and not video and not audio:
+            return render(request, "post_create.html", {"error": "يجب إضافة نص أو صورة أو صوت أو فيديو."})
 
-        post = Post(user=request.user, content=content, image=image, audio=audio)
+        post = Post(user=request.user, content=content, video=video_url, image=image, audio=audio)
         post.save()
 
         return redirect("home")

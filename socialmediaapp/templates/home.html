@@ -420,6 +420,14 @@
         </audio>
     </div>
 {% endif %}
+{% if post.video %}
+    <div class="mt-3">
+        <video controls width="100%">
+            <source src="{{ post.video.url }}" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+    </div>
+{% endif %}
 
 
 
