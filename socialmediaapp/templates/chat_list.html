@@ -204,7 +204,74 @@
         }
     }
 </style>
+<style>
+    :root {
+        --primary-color: #1877f2;
+        --secondary-color: #f0f2f5;
+        --text-color: #050505;
+        --light-text: #65676b;
+        --white: #ffffff;
+        --border-color: #dddfe2;
+        
+        /* متغيرات الوضع المظلم */
+        --dark-bg: #18191a;
+        --dark-card: #242526;
+        --dark-text: #e4e6eb;
+        --dark-light-text: #b0b3b8;
+        --dark-border: #3e4042;
+    }
 
+    /* أنماط الوضع المظلم */
+    body.dark-mode {
+        background-color: var(--dark-bg) !important;
+        color: var(--dark-text) !important;
+    }
+
+    .dark-mode .chat-list-container {
+        background-color: var(--dark-card) !important;
+    }
+
+    .dark-mode .chat-header {
+        background-color: var(--dark-card) !important;
+        border-bottom-color: var(--dark-border) !important;
+    }
+
+    .dark-mode .chat-title {
+        color: var(--dark-text) !important;
+    }
+
+    .dark-mode .search-container {
+        background-color: var(--dark-card) !important;
+    }
+
+    .dark-mode .search-input {
+        background-color: var(--dark-bg) !important;
+        color: var(--dark-text) !important;
+    }
+
+    .dark-mode .user-item {
+        background-color: var(--dark-card) !important;
+        border-bottom-color: var(--dark-border) !important;
+    }
+
+    .dark-mode .user-item:hover {
+        background-color: var(--dark-bg) !important;
+    }
+
+    .dark-mode .last-message,
+    .dark-mode .message-time {
+        color: var(--dark-light-text) !important;
+    }
+
+    .dark-mode .no-chats {
+        color: var(--dark-light-text) !important;
+    }
+
+    .dark-mode .user-item.new-message {
+        background-color: #2d3a4b !important;
+        border-left-color: var(--primary-color) !important;
+    }
+</style>
 <div class="chat-list-container" dir="rtl">
     <div class="chat-header">
         <h1 class="chat-title">المحادثات</h1>
@@ -296,6 +363,38 @@
                     item.classList.remove('new-message');
                     const badge = item.querySelector('.new-message-badge');
                     if (badge) badge.remove();
+                }
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const darkModeToggle = document.getElementById("dark-mode-toggle");
+            const body = document.body;
+            
+            // تحميل حالة الوضع المظلم من localStorage
+            if (localStorage.getItem("dark-mode") === "enabled") {
+                body.classList.add("dark-mode");
+            }
+            
+            // عند النقر على زر التبديل
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener("click", function() {
+                    body.classList.toggle("dark-mode");
+                    const isDarkMode = body.classList.contains("dark-mode");
+                    localStorage.setItem("dark-mode", isDarkMode ? "enabled" : "disabled");
+                    
+                    // إرسال حدث لتحديث الصفحات الأخرى
+                    window.dispatchEvent(new CustomEvent('darkModeChanged', { detail: isDarkMode }));
+                });
+            }
+            
+            // الاستماع لتغييرات الوضع المظلم من الصفحات الأخرى
+            window.addEventListener('darkModeChanged', function(e) {
+                if (e.detail) {
+                    body.classList.add("dark-mode");
+                } else {
+                    body.classList.remove("dark-mode");
                 }
             });
         });
