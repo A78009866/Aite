@@ -283,15 +283,31 @@
 .dark-mode .verified-badge {
     color: #1DA1F2;
 }
+.back-button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 10px;
+}
+.dark-mode .back-button {
+    color: var(--primary-color);
+}
 </style>
 <div class="chat-list-container" dir="rtl">
-    <div class="chat-header">
+    <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <button class="back-button" onclick="window.location.href='/home/'">
+            <i class="fas fa-arrow-left"></i>
+        </button>
         <h1 class="chat-title">المحادثات</h1>
+        <div style="width: 48px;"></div> <!-- عنصر فارغ للمحافظة على التوازن -->
     </div>
     
     <div class="search-container">
         <input type="text" class="search-input" placeholder="ابحث عن محادثة..." onkeyup="searchChats(this.value)">
-    </div>
+    </div> 
     
     <ul class="user-list" id="chatList">
         {% for user_info in all_users %}
