@@ -1,6 +1,8 @@
 {% block content %}
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 </head>
 
 <style>
@@ -271,6 +273,16 @@
         background-color: #2d3a4b !important;
         border-left-color: var(--primary-color) !important;
     }
+    .verified-badge {
+    color: #1DA1F2;
+    font-size: 0.8em;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+.dark-mode .verified-badge {
+    color: #1DA1F2;
+}
 </style>
 <div class="chat-list-container" dir="rtl">
     <div class="chat-header">
@@ -286,13 +298,18 @@
             <li class="user-item {% if user_info.is_new %}new-message{% endif %}" onclick="location.href='{% url 'chat' user_info.user.username %}'">
                 <img src="{{ user_info.user.profile_picture.url }}" alt="{{ user_info.user.username }}" class="user-avatar"
                      onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
-                <div class="user-info">
-                    <div class="user-name">
-                        {% if user_info.is_new %}<span class="new-message-badge">جديد</span>{% endif %}
-                        {{ user_info.user.username }}
+                     <div class="user-info">
+                        <div class="user-name">
+                            {% if user_info.is_new %}<span class="new-message-badge">جديد</span>{% endif %}
+                            {{ user_info.user.username }}
+                            {% if user_info.user.is_verified %}
+                                <span class="verified-badge" title="حساب موثوق (لديه أكثر من 10 متابعين)">
+                                    <i class="fas fa-check-circle"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="last-message">{{ user_info.last_message }}</div>
                     </div>
-                    <div class="last-message">{{ user_info.last_message }}</div>
-                </div>
                 <div class="message-time">
                     {{ user_info.last_time|date:"H:i" }}
                 </div>

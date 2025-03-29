@@ -260,6 +260,17 @@
     color: #4fc3f7;
     font-size: 10px;
 }
+   
+.verified-badge {
+    color: #1DA1F2;
+    font-size: 0.8em;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+.dark-mode .verified-badge {
+    color: #1DA1F2;
+}
     </style>
 </head>
 <body>
@@ -271,7 +282,15 @@
             </a>
             <div class="header-content">
                 <img src="{{ other_user.profile_picture.url }}" alt="Profile" class="profile-pic">
-                <div class="user-name">{{ other_user.username }}</div>
+                <!-- في قسم الهيدر -->
+<div class="user-name">
+    {{ other_user.username }}
+    {% if other_user.is_verified %}
+        <span class="verified-badge" title="حساب موثوق (لديه أكثر من 10 متابعين)">
+            <i class="fas fa-check-circle"></i>
+        </span>
+    {% endif %}
+</div>
             </div>
         </div>
         
