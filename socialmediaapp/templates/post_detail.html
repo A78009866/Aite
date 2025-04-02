@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منشور {{ post.user.username }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content-container {
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+
+        .post {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .post-actions .btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .post-actions .btn:hover {
+            background: #f0f2f5;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .like {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .like:hover {
+            background: #f0f2f5;
+        }
+
+        .comments-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .comment {
+            background-color: #e9ecef;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+            max-width: 200px;
+        }
+
+        /* الوضع المظلم */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .dark-mode .post {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border: 1px solid #333;
+        }
+
+        .dark-mode .post-content,
+        .dark-mode .text-muted,
+        .dark-mode .mb-0 a {
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .comment {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container content-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="post">
+                    <div class="post-header d-flex align-items-center">
+                        <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2 border" alt="User avatar" 
+                             onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';"
+                             style="width: 50px; height: 50px; object-fit: cover;">
+                        <div>
+                            <h6 class="mb-0">
+                                <a href="{% url 'profile' post.user.username %}" class="text-decoration-none">
+                                    {{ post.user.username }}
+                                </a>
+                            </h6>
+                            <small class="text-muted">{{ post.created_at }}</small>
+                            <a href="{% url 'chat' post.user.username %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-comments"></i> دردشة
+                            </a>
+                        </div>
+                        {% if post.user == request.user %}
+                            <form method="POST" action="{% url 'delete_post' post.id %}" class="ms-auto">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('هل تريد حذف المنشور؟');">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <p class="post-content mt-2">{{ post.content }}</p>
+                    
+                    {% if post.image and post.image.url %}
+                        <div class="post-image-container">
+                            <img src="{{ post.image.url }}" alt="" class="img-fluid rounded">
+                        </div>
+                    {% endif %}
+                    
+                    {% if post.audio %}
+                        <div class="mt-3">
+                            <audio controls>
+                                <source src="{{ post.audio.url }}" type="audio/mp3">
+                                متصفحك لا يدعم تشغيل الصوت.
+                            </audio>
+                        </div>
+                    {% endif %}
+                    
+                    {% if post.video %}
+                        <div class="mt-3">
+                            <video controls width="100%">
+                                <source src="{{ post.video.url }}" type="video/mp4">
+                                متصفحك لا يدعم تشغيل الفيديو.
+                            </video>
+                        </div>
+                    {% endif %}
+
+                    <div class="post-actions d-flex justify-content-between align-items-center mt-3">
+                        <!-- زر الإعجاب وعدد الإعجابات -->
+                        <div class="like-section d-flex align-items-center">
+                            {% if user in post.likers.all %}
+                                <div class="like" onclick="unlike_post(this)" data-post_id="{{post.id}}">
+                                    <div class="svg-span">
+                                        <svg width="1.1em" height="1.1em" viewBox="0 -1 16 16" class="bi bi-heart-fill" fill="#e0245e" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                        </svg>
+                                    </div>
+                                    &nbsp;
+                                    <div style="padding: 7px 0px;" class="likes_count">{{post.likers.count}}</div>
+                                </div>
+                            {% else %}
+                                <div class="like" onclick="like_post(this)" data-post_id="{{post.id}}">
+                                    <div class="svg-span">
+                                        <svg class="liked" width="1.1em" height="1.1em" viewBox="0 -1 16 16" class="bi bi-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                        </svg>
+                                    </div>
+                                    &nbsp;
+                                    <div style="padding: 7px 0px;" class="likes_count">{{post.likers.count}}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    
+                        <!-- زر التعليقات -->
+                        <button class="btn btn-outline-secondary btn-sm comment-button" data-bs-toggle="collapse" data-bs-target="#comments-{{ post.id }}">
+                            <i class="fas fa-comment"></i> التعليقات
+                        </button>
+                    </div>
+
+                    <!-- التعليقات -->
+                    <div class="collapse mt-3 show" id="comments-{{ post.id }}">
+                        <h6>التعليقات:</h6>
+                        <div class="comments-list">
+                            {% for comment in post.comments.all %}
+                                <div class="comment">
+                                    <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                                </div>
+                            {% empty %}
+                                <p>لا توجد تعليقات بعد.</p>
+                            {% endfor %}
+                        </div>
+                        <form method="POST" class="mt-2 add-comment-form" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" name="content" class="form-control comment-input" placeholder="أضف تعليقًا..." required>
+                                <button type="submit" class="btn btn-primary">بعث</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <a href="/home/" class="btn btn-primary back-btn">
+                    <i class="fas fa-arrow-left"></i> العودة للصفحة الرئيسية
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function like_post(element) {
+            const postId = element.getAttribute('data-post_id');
+            fetch(`/post/${postId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked) {
+                    element.innerHTML = `
+                        <div class="svg-span">
+                            <svg width="1.1em" height="1.1em" viewBox="0 -1 16 16" class="bi bi-heart-fill" fill="#e0245e" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                            </svg>
+                        </div>
+                        &nbsp;
+                        <div style="padding: 7px 0px;" class="likes_count">${data.like_count}</div>
+                    `;
+                } else {
+                    element.innerHTML = `
+                        <div class="svg-span">
+                            <svg class="liked" width="1.1em" height="1.1em" viewBox="0 -1 16 16" class="bi bi-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                            </svg>
+                        </div>
+                        &nbsp;
+                        <div style="padding: 7px 0px;" class="likes_count">${data.like_count}</div>
+                    `;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        function unlike_post(element) {
+            const postId = element.getAttribute('data-post_id');
+            fetch(`/post/${postId}/unlike/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.liked) {
+                    element.innerHTML = `
+                        <div class="svg-span">
+                            <svg class="liked" width="1.1em" height="1.1em" viewBox="0 -1 16 16" class="bi bi-heart" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 2.748l-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                            </svg>
+                        </div>
+                        &nbsp;
+                        <div style="padding: 7px 0px;" class="likes_count">${data.like_count}</div>
+                    `;
+                } else {
+                    element.innerHTML = `
+                        <div class="svg-span">
+                            <svg width="1.1em" height="1.1em" viewBox="0 -1 16 16" class="bi bi-heart-fill" fill="#e0245e" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                            </svg>
+                        </div>
+                        &nbsp;
+                        <div style="padding: 7px 0px;" class="likes_count">${data.like_count}</div>
+                    `;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".add-comment-form").forEach(form => {
+                form.addEventListener("submit", function(event) {
+                    event.preventDefault();
+                    
+                    const postId = this.getAttribute("data-post-id");
+                    const commentInput = this.querySelector(".comment-input");
+                    const commentContent = commentInput.value;
+                    const commentsList = this.closest(".collapse").querySelector(".comments-list");
+
+                    if (!commentContent.trim()) {
+                        alert("يرجى كتابة تعليق قبل الإرسال.");
+                        return;
+                    }
+
+                    fetch(`/post/${postId}/comment/`, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ content: commentContent })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const newComment = document.createElement("div");
+                            newComment.classList.add("comment");
+                            newComment.innerHTML = `<strong>${data.username}</strong>: ${data.content}`;
+                            commentsList.appendChild(newComment);
+                            commentInput.value = "";
+                        } else {
+                            alert("حدث خطأ: " + data.error);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        });
+    </script>
+</body>
+</html>
