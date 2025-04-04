@@ -992,8 +992,7 @@
             left: 19px !important;
         }
     }
-    </style>
-    <style>
+   
         /* ✅ تحسين التصميم العام للنافبار الجديد */
 /* أنماط النافبار الجديدة */
 .navbar {
@@ -1103,8 +1102,7 @@
 .dark-mode .verified-badge {
     color: #1DA1F2;
 }
-    </style>
-    <style>
+    
     /* نافذة الرسالة المنبثقة */
     .message-popup {
         position: fixed;
@@ -1226,9 +1224,7 @@
 .text-danger {
     color: #dc3545 !important;
 }
-</style>
 
-<style>
     /* ✅ تحسين تصميم المنشورات لفيسبوك لايت */
     .post {
         background-color: #ffffff;
@@ -1299,8 +1295,7 @@
         padding: 6px 8px;
         margin-bottom: 4px;
     }
-</style>
-<style>
+
     /* ✅ تحسين تصميم القصص لفيسبوك لايت */
     .stories-container {
         background-color: white;
@@ -1416,8 +1411,7 @@
             font-size: 11px;
         }
     }
-</style>
-<style>
+
     /* ✅ تحسينات للهواتف */
     @media (max-width: 700px) {
         .stories-container {
@@ -1457,75 +1451,347 @@
         }
     }
 </style>
+<style>
+    /* ✅ تحسين التصميم العام */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+        direction: rtl; /* إضافة هذه الخاصية */
+        text-align: right; /* محاذاة النص لليمين */
+    }
+
+    /* ✅ تعديلات إضافية للعناصر الأخرى */
+    .post-header, 
+    .post-actions, 
+    .comments-section,
+    .notification-item .notification-content,
+    .story-item,
+    .stories-wrapper,
+    .navbar-nav {
+        direction: rtl;
+    }
+
+    /* تعديلات لمحاذاة العناصر */
+    .search-bar {
+        margin-left: 0;
+        margin-right: 20px; /* نقل المسافة إلى الجانب الأيمن */
+    }
+
+    /* تعديلات للوضع المظلم */
+    .dark-mode body {
+        direction: rtl;
+    }
+
+    /* ✅ تعديلات للهواتف */
+    @media (max-width: 700px) {
+        body {
+            direction: rtl;
+        }
+        
+        .search-bar {
+            margin-right: 10px;
+            margin-left: 0;
+        }
+    }
+
+    /* باقي الكود الخاص بك يبقى كما هو */
+    /* ... */
+</style>
+<style>
+    /* تحسينات نافذة الإعدادات للهواتف */
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* لسلاسة التمرير على iOS */
+    }
+
+    @media (max-width: 700px) {
+        .modal-overlay {
+            align-items: flex-start; /* محاذاة من الأعلى للهواتف */
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        
+        .modal-content {
+            width: 95% !important;
+            max-height: 85vh;
+            margin: 0 auto;
+        }
+        
+        .settings-section {
+            padding: 12px !important;
+            margin-bottom: 12px !important;
+        }
+        
+        /* تحسين التمرير الداخلي */
+        .modal-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+    }
+    /* أنماط نافذة الإعدادات المعدلة */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 1;
+}
+
+.modal-body {
+    padding: 0 20px 20px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.settings-section {
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+}
+
+.settings-btn {
+    padding: 10px;
+    border: none;
+    background: #000000;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+}
+
+.settings-btn:active {
+    transform: translateY(0);
+}
+
+/* أنماط الوضع المظلم */
+.dark-mode .modal-content {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dark-mode .modal-header {
+    border-bottom-color: #444;
+}
+
+.dark-mode .section-title {
+    color: #e0e0e0;
+}
+
+.dark-mode .settings-section {
+    background-color: #3d3d3d;
+    border-color: #444;
+}
+
+.dark-mode .close-btn {
+    color: #ffffff;
+}
+
+.dark-mode .form-control {
+    background-color: #444;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #aaa;
+}
+
+.dark-mode .settings-btn {
+    background-color: #000000;
+    color: white;
+}
+
+.dark-mode .settings-btn:hover {
+    background-color: #333;
+}
+
+/* تحسينات للهواتف */
+@media (max-width: 700px) {
+    .modal-content {
+        width: 95% !important;
+        max-width: 100%;
+    }
+    
+    .modal-header, .modal-body {
+        padding: 12px 15px;
+    }
+    
+    .settings-section {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .settings-btn {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+</style>
 </head>
 <body>
    
     <!-- في قسم الإعدادات في home.html -->
+    <!-- في قسم الإعدادات في home.html -->
 <div id="settings-modal" class="modal-overlay">
     <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>الإعدادات</h2>
-        
-        <!-- قسم تغيير الاسم -->
-        <div class="settings-section mb-4">
-            <h4>تغيير الاسم</h4>
-            <form id="change-username-form" class="mt-3">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input type="text" class="form-control" id="new-username" placeholder="الاسم الجديد" required>
-                </div>
-                <button type="submit" class="settings-btn">
-                    <i class="fas fa-user-edit"></i> حفظ الاسم
-                </button>
-            </form>
+        <!-- رأس نافذة الإعدادات مع زر الإغلاق -->
+        <div class="modal-header d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+            <h2 class="mb-0">الإعدادات</h2>
+            <button class="close-btn btn-close" aria-label="إغلاق"></button>
         </div>
         
-        <!-- قسم تغيير كلمة المرور -->
-        <div class="settings-section mb-4">
-            <h4>بدل الموتباس</h4>
-            <form id="change-password-form" class="mt-3">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input type="password" class="form-control" id="current-password" placeholder="الموتباس الحالي" required>
-                </div>
-                <div class="form-group mt-2">
-                    <input type="password" class="form-control" id="new-password" placeholder="الموتباس الجديد" required>
-                </div>
-                <div class="form-group mt-2">
-                    <input type="password" class="form-control" id="confirm-password" placeholder="تأكيد الموتباس الجديد" required>
-                </div>
-                <button type="submit" class="settings-btn">
-                    <i class="fas fa-key"></i> بدل الموتباس 
-                </button>
-            </form>
-        </div>
-        
-        <!-- قسم تبديل الوضع المظلم -->
-        <div class="settings-section mb-4">
-            <h4>تبديل الوضع</h4>
-            <div class="toggle-container" style="display: flex; align-items: center; gap: 10px; justify-content: center; margin-top: 10px;">
-                <span><i class="fas fa-sun"></i></span>
-                <div class="toggle-switch" id="dark-mode-toggle"></div>
-                <span><i class="fas fa-moon"></i></span>
+        <div class="modal-body">
+            <!-- قسم تغيير الاسم -->
+            <div class="settings-section mb-4">
+                <h4 class="section-title">تغيير الاسم</h4>
+                <form id="change-username-form" class="mt-3">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <input type="text" class="form-control" id="new-username" placeholder="الاسم الجديد" required>
+                    </div>
+                    <button type="submit" class="settings-btn w-100">
+                        <i class="fas fa-user-edit me-2"></i> حفظ الاسم
+                    </button>
+                </form>
             </div>
-        </div>
-
-        <!-- قسم حذف الحساب -->
-        <div class="settings-section">
-            <h4>حذف الحساب</h4>
-            <p class="text-danger">⚠️ حرز روحك: هاذا اجراء ما تقدرش تتراجع عليه!</p>
-            <form id="delete-account-form" class="mt-3">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input type="password" class="form-control" id="delete-password" placeholder="أدخل كلمة المرور لتأكيد الحذف" required>
+            
+            <!-- قسم تغيير كلمة المرور -->
+            <div class="settings-section mb-4">
+                <h4 class="section-title">بدل الموتباس</h4>
+                <form id="change-password-form" class="mt-3">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <input type="password" class="form-control" id="current-password" placeholder="الموتباس الحالي" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <input type="password" class="form-control" id="new-password" placeholder="الموتباس الجديد" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <input type="password" class="form-control" id="confirm-password" placeholder="تأكيد الموتباس الجديد" required>
+                    </div>
+                    <button type="submit" class="settings-btn w-100">
+                        <i class="fas fa-key me-2"></i> بدل الموتباس 
+                    </button>
+                </form>
+            </div>
+            
+            <!-- قسم تبديل الوضع المظلم -->
+            <div class="settings-section mb-4">
+                <h4 class="section-title">تبديل الوضع</h4>
+                <div class="toggle-container d-flex justify-content-center align-items-center mt-3">
+                    <span class="me-2"><i class="fas fa-sun"></i></span>
+                    <div class="toggle-switch" id="dark-mode-toggle"></div>
+                    <span class="ms-2"><i class="fas fa-moon"></i></span>
                 </div>
-                <button type="submit" class="settings-btn btn-danger">
-                    <i class="fas fa-trash-alt"></i> محي الكونت نهائياً
-                </button>
-            </form>
+            </div>
+
+            <!-- قسم حذف الحساب -->
+            <div class="settings-section">
+                <h4 class="section-title">حذف الحساب</h4>
+                <p class="text-danger mb-3"><i class="fas fa-exclamation-triangle me-2"></i>حرز روحك: هاذا اجراء ما تقدرش تتراجع عليه!</p>
+                <form id="delete-account-form" class="mt-3">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <input type="password" class="form-control" id="delete-password" placeholder="أدخل كلمة المرور لتأكيد الحذف" required>
+                    </div>
+                    <button type="submit" class="settings-btn btn-danger w-100">
+                        <i class="fas fa-trash-alt me-2"></i> محي الكونت نهائياً
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // فتح وإغلاق نافذة الإعدادات
+        document.getElementById("settings-btn").addEventListener("click", function() {
+            document.getElementById("settings-modal").style.display = "flex";
+            document.body.style.overflow = "hidden";
+        });
+    
+        document.querySelector(".close-btn").addEventListener("click", function() {
+            document.getElementById("settings-modal").style.display = "none";
+            document.body.style.overflow = "";
+        });
+    
+        // إغلاق النافذة عند النقر خارجها
+        document.getElementById("settings-modal").addEventListener("click", function(e) {
+            if (e.target === this) {
+                this.style.display = "none";
+                document.body.style.overflow = "";
+            }
+        });
+    
+        // إغلاق النافذة عند الضغط على زر Escape
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape") {
+                document.getElementById("settings-modal").style.display = "none";
+                document.body.style.overflow = "";
+            }
+        });
+    });
+    </script>
 <script>
 // حذف الحساب
 document.getElementById("delete-account-form").addEventListener("submit", function(e) {
