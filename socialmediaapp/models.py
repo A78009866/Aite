@@ -55,6 +55,14 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     profile_picture = CloudinaryField('image')
+    last_activity = models.DateTimeField(auto_now=True)  # أضف هذا الحقل
+    
+    @property
+    def is_online(self):
+        """تحقق إذا كان المستخدم متصل الآن (في آخر 5 دقائق)"""
+        from django.utils import timezone
+        now = timezone.now()
+        return (now - self.last_activity).total_seconds() < 300  # 5 دقائق
     
     @property
     def is_verified(self):
