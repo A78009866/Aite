@@ -1227,6 +1227,236 @@
     color: #dc3545 !important;
 }
 </style>
+
+<style>
+    /* ✅ تحسين تصميم المنشورات لفيسبوك لايت */
+    .post {
+        background-color: #ffffff;
+        border-radius: 0;
+        padding: 12px 16px;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e4e6eb;
+    }
+
+    .dark-mode .post {
+        background-color: #1e1e1e;
+        border-bottom-color: #333;
+    }
+
+    /* إزالة الهوامش الجانبية على الهواتف */
+    @media (max-width: 700px) {
+        .post {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        
+        .content-container {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+
+    /* تحسين المسافات بين العناصر */
+    .post-header {
+        margin-bottom: 8px;
+    }
+
+    .post-content {
+        margin: 10px 0;
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+    .post-actions {
+        padding: 8px 0 4px;
+    }
+
+    /* تحسين صور المنشورات */
+    .post-image-container img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: contain;
+        border-radius: 0;
+    }
+
+    /* تحسين الفيديوهات */
+    video {
+        width: 100%;
+        max-height: 500px;
+        background-color: #000;
+    }
+
+    /* تحسين التعليقات */
+    .comments-section {
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+
+    .comment {
+        padding: 6px 8px;
+        margin-bottom: 4px;
+    }
+</style>
+<style>
+    /* ✅ تحسين تصميم القصص لفيسبوك لايت */
+    .stories-container {
+        background-color: white;
+        border-radius: 0;
+        padding: 12px 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        border-bottom: 1px solid #e4e6eb;
+        overflow-x: auto;
+        white-space: nowrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dark-mode .stories-container {
+        background-color: #1e1e1e;
+        border-bottom-color: #333;
+    }
+
+    .stories-wrapper {
+        display: inline-flex;
+        gap: 12px;
+        padding: 0 12px;
+    }
+
+    .story-item {
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        width: 80px;
+        vertical-align: top;
+    }
+
+    .story-avatar {
+        position: relative;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        padding: 2px;
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        margin: 0 auto;
+    }
+
+    .story-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid white;
+        display: block;
+    }
+
+    .story-item.add-story .story-avatar {
+        background: #e4e6eb;
+    }
+
+    .dark-mode .story-item.add-story .story-avatar {
+        background: #3e3e3e;
+    }
+
+    .add-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #1877f2;
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        border: 2px solid white;
+    }
+
+    .story-author {
+        margin-top: 6px;
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #333;
+    }
+
+    .dark-mode .story-author {
+        color: #e0e0e0;
+    }
+
+    /* ✅ تحسينات للهواتف */
+    @media (max-width: 700px) {
+        .stories-container {
+            padding: 10px 0;
+        }
+        
+        .stories-wrapper {
+            gap: 8px;
+            padding: 0 8px;
+        }
+        
+        .story-item {
+            width: 70px;
+        }
+        
+        .story-avatar {
+            width: 56px;
+            height: 56px;
+        }
+        
+        .story-author {
+            font-size: 11px;
+        }
+    }
+</style>
+<style>
+    /* ✅ تحسينات للهواتف */
+    @media (max-width: 700px) {
+        .stories-container {
+            margin-top: 70px; /* تقليل الهامش العلوي ليتناسب مع ارتفاع النافبار */
+            padding: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-container {
+            margin-top: 70px; /* يجب أن يكون نفس هامش القصص */
+        }
+        
+        .stories-wrapper {
+            gap: 8px;
+            padding: 0 8px;
+        }
+        
+        .story-item {
+            width: 70px;
+            margin-bottom: 0;
+        }
+        
+        .story-avatar {
+            width: 56px;
+            height: 56px;
+        }
+        
+        .story-author {
+            font-size: 11px;
+        }
+        
+        .post {
+            margin-top: 0;
+            border-radius: 0;
+            width: 100%;
+        }
+    }
+</style>
 </head>
 <body>
    
@@ -1400,10 +1630,10 @@ document.getElementById("delete-account-form").addEventListener("submit", functi
         </div>
     </div>
 </nav>
-<div class="container content-container">
-    <!-- قسم القصص -->
-    <div class="stories-container">
-        <div class="stories-wrapper">
+<div class="container-fluid content-container px-0">
+<!-- قسم القصص المعدل -->
+<div class="stories-container">
+    <div class="stories-wrapper">
         <!-- قصة المستخدم الحالي -->
         <div class="story-item add-story" onclick="openStoryCreator()">
             <div class="story-avatar">
@@ -1418,25 +1648,35 @@ document.getElementById("delete-account-form").addEventListener("submit", functi
         
         <!-- قصص المستخدمين الآخرين -->
         {% for story in stories %}
-<div class="story-item" onclick="openStoryViewer({{ story.id }})">
-    <div class="story-avatar">
-        <img src="{{ story.user.profile_picture.url }}" 
-             alt="Profile" 
-             class="profile-pic"
-             onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
+            <div class="story-item" onclick="openStoryViewer({{ story.id }})">
+                <div class="story-avatar">
+                    <img src="{{ story.user.profile_picture.url }}" 
+                         alt="Profile" 
+                         class="profile-pic"
+                         onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
+                </div>
+                <div class="story-author">{{ story.user.username }}</div>
+            </div>
+        {% endfor %}
     </div>
-    <div class="story-author">{{ story.user.username }}</div>
 </div>
-{% endfor %}
-        </div>
-    </div>
+<script>
+    // تحسين تحميل صور القصص
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".story-avatar img").forEach(img => {
+            img.loading = "lazy";
+            img.onerror = function() {
+                this.src = '/media/profile_pics/default_profile.png';
+            };
+        });
+    });
+</script>
     <!-- ✅ محتوى الصفحة -->
  <!-- المنشورات -->
- <div class="row justify-content-center">
-    <div class="col-lg-8">
-        {% for post in posts %}               
-
-                    <div class="post">
+ <div class="row mx-0">
+    <div class="col-12 px-0">
+        {% for post in posts %}
+            <div class="post">
                         <div class="post-header d-flex align-items-center">
                             <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2 border" alt="User avatar" 
                             onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';"
@@ -1551,7 +1791,23 @@ document.getElementById("delete-account-form").addEventListener("submit", functi
             </div>
         </div>
     </div>
-
+    <script>
+        // تعديلات JavaScript لتحسين الأداء
+        document.addEventListener("DOMContentLoaded", function() {
+            // تحسين تحميل الصور
+            document.querySelectorAll(".post-image-container img").forEach(img => {
+                img.loading = "lazy";
+                img.onerror = function() {
+                    this.style.display = "none";
+                };
+            });
+            
+            // تحسين تحميل الفيديوهات
+            document.querySelectorAll("video").forEach(video => {
+                video.preload = "metadata";
+            });
+        });
+    </script>
     <script>
         function like_post(element) {
             const postId = element.getAttribute('data-post_id');
