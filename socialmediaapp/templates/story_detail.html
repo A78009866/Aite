@@ -1,0 +1,59 @@
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card story-card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ story.user.profile_picture.url }}" 
+                             class="rounded-circle me-2" 
+                             width="40" 
+                             height="40" 
+                             alt="{{ story.user.username }}">
+                        <div>
+                            <h5 class="mb-0">
+                                <a href="{% url 'profile' story.user.username %}" 
+                                   class="text-decoration-none">
+                                    {{ story.user.username }}
+                                </a>
+                            </h5>
+                            <small class="text-muted">{{ story.created_at|timesince }} ago</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ story.image.url }}" 
+                         class="img-fluid story-image" 
+                         alt="Story image">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .story-card {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .story-image {
+        max-height: 80vh;
+        object-fit: contain;
+    }
+    
+    /* Dark mode styles */
+    body.dark-mode .story-card {
+        background-color: #1e1e1e;
+        border-color: #333;
+    }
+    
+    body.dark-mode .card-header {
+        background-color: #2d2d2d;
+        border-bottom-color: #333;
+    }
+</style>
+{% endblock %}

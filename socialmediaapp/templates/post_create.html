@@ -1,0 +1,424 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post - Aite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ece9e6 0%, #ffffff 100%);
+            color: #333;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+        .navbar {
+            background-color: transparent;
+            padding: 10px 0;
+        }
+        .navbar-brand {
+            color: #000000 !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        .back-link {
+            color: #000000 !important;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover {
+            color: #665b5b !important;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .form-control {
+            border-radius: 20px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #fff;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+        .file-input-wrapper .btn-file {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #495057;
+        }
+
+        #record-button, #stop-recording {
+    font-size: 16px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+#record-button i, #stop-recording i {
+    margin-right: 5px;
+}
+
+#audio-preview {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#uploaded-audio-preview {
+    margin-top: 10px;
+    width: 100%;
+}
+
+    </style>
+    <style>
+        /* أنماط الوضع المظلم */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+            color: #e0e0e0 !important;
+        }
+    
+        .dark-mode .container {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border: 1px solid #333 !important;
+        }
+    
+        .dark-mode .navbar-brand,
+        .dark-mode .back-link {
+            color: #ffffff !important;
+        }
+    
+        .dark-mode .form-control {
+            background-color: #2d2d2d !important;
+            color: #ffffff !important;
+            border-color: #444 !important;
+        }
+    
+        .dark-mode .form-control::placeholder {
+            color: #a0a0a0 !important;
+        }
+    
+        .dark-mode .btn-outline-secondary {
+            color: #e0e0e0 !important;
+            border-color: #666 !important;
+        }
+    
+        .dark-mode .btn-outline-secondary:hover {
+            background-color: #333 !important;
+        }
+    
+        .dark-mode .text-muted {
+            color: #a0a0a0 !important;
+        }
+    
+        /* زر التبديل العصري */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 0 10px;
+        }
+    
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            transition: all 0.3s;
+        }
+    
+        .dark-mode .toggle-switch {
+            background: #000000;
+        }
+    
+        .dark-mode .toggle-switch::before {
+            left: 25px;
+            background: #fff;
+        
+        }
+            /* تحسينات الشعار والاسم في الوضع المظلم */
+    .dark-mode .navbar-brand {
+        background: linear-gradient(135deg, #3a3a3a 0%, #1e1e1e 100%) !important;
+        padding: 8px 15px !important;
+        border-radius: 30px !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .dark-mode .navbar-brand strong {
+        color: #ffffff !important;
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .dark-mode .navbar-brand img {
+        border: 2px solid #ffffff !important;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* تأثيرات عند التفاعل */
+    .dark-mode .navbar-brand:hover {
+        transform: scale(1.02) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .dark-mode .navbar-brand:active {
+        transform: scale(0.98) !important;
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Aiter.jpg" alt="Aite Logo" width="40" height="40" style="border-radius: 50%;">  
+                <strong>Aite</strong>           
+            <a class="back-link" href="{% url 'home' %}">
+                <i class="fas fa-arrow-left"></i> رجع للصفحة الرئيسية
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4">صنع منشور جديد</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <textarea name="content" class="form-control" rows="4" placeholder="كتب كاش حاجة ..."></textarea>
+                <div class="mb-3">
+                    <label for="audio-upload" class="btn btn-outline-secondary">
+                        <i class="fas fa-upload"></i> رفع ملف صوتي
+                    </label>
+                    <input type="file" id="audio-upload" name="audio" accept="audio/*" class="d-none">
+                    <audio id="uploaded-audio-preview" controls class="d-none"></audio>
+                </div>
+                
+            </div>
+            <div class="mb-3">
+                <label for="video-upload" class="btn btn-outline-secondary">
+                    <i class="fas fa-video"></i> رفع فيديو
+                </label>
+                <input type="file" id="video-upload" name="video" accept="video/*" class="d-none">
+                <video id="uploaded-video-preview" controls class="d-none"></video>
+            </div>
+            <script>
+                document.getElementById("video-upload").addEventListener("change", function () {
+                    let file = this.files[0];
+                    if (file) {
+                        let url = URL.createObjectURL(file);
+                        let preview = document.getElementById("uploaded-video-preview");
+                        preview.src = url;
+                        preview.classList.remove("d-none");
+                    }
+                });
+            </script>
+            
+            <div class="mb-3">
+                <div class="file-input-wrapper">
+                    <button class="btn-file" type="button">
+                        <i class="fas fa-image"></i> دير فوطو
+                    </button>
+                    <input type="file" name="image" accept="image/*">
+                </div>
+                <small class="form-text text-muted">دخل الفوطو تاع المنشور تاعك</small>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> بعث
+            </button>
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-primary" id="record-button">
+                    <i class="fas fa-microphone"></i> تسجيل الصوت
+                </button>
+                <button type="button" class="btn btn-outline-danger d-none" id="stop-recording">
+                    <i class="fas fa-stop"></i> إيقاف
+                </button>
+                <audio id="audio-preview" controls class="d-none"></audio>
+                <input type="file" id="audio-file" name="audio" accept="audio/*" hidden>
+            </div>
+            
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let recordButton = document.getElementById("record-button");
+            let stopButton = document.getElementById("stop-recording");
+            let audioPreview = document.getElementById("audio-preview");
+            let audioFileInput = document.getElementById("audio-file");
+    
+            let mediaRecorder;
+            let audioChunks = [];
+    
+            async function requestMicrophone() {
+                try {
+                    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    console.log("🎤 إذن الميكروفون تم منحه.");
+                    return stream;
+                } catch (error) {
+                    alert("⚠️ الميكروفون غير مفعّل! يرجى تفعيله من إعدادات التطبيق.");
+                    return null;
+                }
+            }
+    
+            recordButton.addEventListener("click", async function () {
+                let stream = await requestMicrophone();
+                if (!stream) return;
+    
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+    
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+    
+                mediaRecorder.onstop = () => {
+                    let audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+                    let audioUrl = URL.createObjectURL(audioBlob);
+                    audioPreview.src = audioUrl;
+                    audioPreview.classList.remove("d-none");
+    
+                    // ✅ حفظ التسجيل في `localStorage`
+                    let reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = function () {
+                        localStorage.setItem("savedAudio", reader.result);
+                    };
+    
+                    // ✅ حفظ التسجيل في input file لرفعه للسيرفر
+                    let file = new File([audioBlob], "recording.mp3", { type: "audio/mp3" });
+                    let dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    audioFileInput.files = dataTransfer.files;
+                };
+    
+                mediaRecorder.start();
+                recordButton.classList.add("d-none");
+                stopButton.classList.remove("d-none");
+                recordButton.innerHTML = '<i class="fas fa-microphone"></i> التسجيل...';
+                recordButton.style.backgroundColor = "red";
+            });
+    
+            stopButton.addEventListener("click", function () {
+                if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                    mediaRecorder.stop();
+                    recordButton.classList.remove("d-none");
+                    stopButton.classList.add("d-none");
+                    recordButton.innerHTML = '<i class="fas fa-microphone"></i> تسجيل الصوت';
+                    recordButton.style.backgroundColor = "";
+                }
+            });
+    
+            // ✅ استعادة التسجيل من `localStorage` عند إعادة تحميل الصفحة
+            let savedAudio = localStorage.getItem("savedAudio");
+            if (savedAudio) {
+                audioPreview.src = savedAudio;
+                audioPreview.classList.remove("d-none");
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const body = document.body;
+    if (localStorage.getItem("dark-mode") === "enabled") {
+        body.classList.add("dark-mode");
+    }
+
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener("click", function () {
+            body.classList.toggle("dark-mode");
+            localStorage.setItem("dark-mode", body.classList.contains("dark-mode") ? "enabled" : "disabled");
+        });
+    }
+});
+
+    </script>
+    
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let audioUploadInput = document.getElementById("audio-upload");
+                let uploadedAudioPreview = document.getElementById("uploaded-audio-preview");
+            
+                // عند اختيار ملف صوتي من الجهاز
+                audioUploadInput.addEventListener("change", function () {
+                    if (this.files.length > 0) {
+                        let audioFile = this.files[0];
+                        let audioUrl = URL.createObjectURL(audioFile);
+                        uploadedAudioPreview.src = audioUrl;
+                        uploadedAudioPreview.classList.remove("d-none");
+                    }
+                });
+            });
+            </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const darkModeToggle = document.getElementById("dark-mode-toggle");
+                    const body = document.body;
+                    
+                    // تحميل حالة الوضع المظلم من localStorage
+                    if (localStorage.getItem("dark-mode") === "enabled") {
+                        body.classList.add("dark-mode");
+                    }
+                    
+                    // عند النقر على زر التبديل
+                    if (darkModeToggle) {
+                        darkModeToggle.addEventListener("click", function () {
+                            body.classList.toggle("dark-mode");
+                            const isDarkMode = body.classList.contains("dark-mode");
+                            localStorage.setItem("dark-mode", isDarkMode ? "enabled" : "disabled");
+                            
+                            // إرسال حدث لتحديث الصفحات الأخرى
+                            window.dispatchEvent(new CustomEvent('darkModeChanged', { detail: isDarkMode }));
+                        });
+                    }
+                    
+                    // الاستماع لتغييرات الوضع المظلم من الصفحات الأخرى
+                    window.addEventListener('darkModeChanged', function (e) {
+                        if (e.detail) {
+                            body.classList.add("dark-mode");
+                        } else {
+                            body.classList.remove("dark-mode");
+                        }
+                    });
+                });
+            </script>
+</body>
+</html>
