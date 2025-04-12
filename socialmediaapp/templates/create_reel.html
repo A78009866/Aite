@@ -1,0 +1,425 @@
+{% load static %}
+{% load cloudinary %}
+
+{% block content %}
+<div class="reel-creation-container">
+    <div class="reel-card">
+        <div class="card-header">
+            <h2><i class="fas fa-video me-2"></i> إنشاء ريل جديد</h2>
+        </div>
+        
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data" id="reel-form" class="reel-form">
+                {% csrf_token %}
+
+                {% if error %}
+                    <div class="alert-card error">
+                        <div class="alert-content">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span>{{ error }}</span>
+                        </div>
+                        <button type="button" class="close-btn" data-bs-dismiss="alert">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endif %}
+
+                <!-- Video Upload Card -->
+                <div class="upload-card">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <label for="video" class="upload-label">
+                        <span class="btn-upload">اختر فيديو</span>
+                        <span class="file-info">لم يتم اختيار ملف بعد</span>
+                    </label>
+                    <input type="file" id="video" name="video" accept="video/*" required class="file-input">
+                </div>
+
+                <!-- Caption Card -->
+                <div class="input-card">
+                    <label for="caption" class="input-label">
+                        <i class="fas fa-pencil-alt me-2"></i> وصف الريل (اختياري)
+                    </label>
+                    <textarea id="caption" name="caption" rows="3" class="caption-input" placeholder="اكتب وصفاً جذاباً..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    <i class="fas fa-upload me-2"></i> نشر الريل
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Base Styles - Works on all devices including WebView */
+    :root {
+        --primary-color: #4361ee;
+        --primary-light: #4cc9f0;
+        --error-color: #f72585;
+        --text-color: #2b2d42;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #6c757d;
+        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        --card-shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+                     Oxygen-Sans, Ubuntu, Cantarell, 'Tajawal', sans-serif;
+        background-color: var(--light-gray);
+        color: var(--text-color);
+        line-height: 1.5;
+    }
+    
+    /* Main Container */
+    .reel-creation-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    }
+    
+    /* Card Styles */
+    .reel-card {
+        width: 100%;
+        max-width: 500px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        transition: var(--transition);
+        border: none;
+    }
+    
+    .reel-card:hover {
+        box-shadow: var(--card-shadow-hover);
+    }
+    
+    .card-header {
+        padding: 20px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        text-align: center;
+    }
+    
+    .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+    
+    .card-body {
+        padding: 25px;
+    }
+    
+    /* Alert Card */
+    .alert-card {
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgba(247, 37, 133, 0.1);
+        border-left: 4px solid var(--error-color);
+    }
+    
+    .alert-card.error {
+        background-color: rgba(247, 37, 133, 0.1);
+        border-left-color: var(--error-color);
+    }
+    
+    .alert-content {
+        display: flex;
+        align-items: center;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: var(--error-color);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0;
+    }
+    
+    /* Upload Card */
+    .upload-card {
+        border: 2px dashed var(--medium-gray);
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        margin-bottom: 25px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .upload-card:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(67, 97, 238, 0.03);
+    }
+    
+    .upload-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    
+    .upload-label {
+        display: block;
+        cursor: pointer;
+    }
+    
+    .btn-upload {
+        display: inline-block;
+        padding: 10px 25px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: var(--transition);
+        margin-bottom: 10px;
+    }
+    
+    .btn-upload:hover {
+        background-color: #3a56d4;
+        transform: translateY(-2px);
+    }
+    
+    .file-info {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--dark-gray);
+    }
+    
+    .file-input {
+        position: absolute;
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        z-index: -1;
+    }
+    
+    /* Input Card */
+    .input-card {
+        margin-bottom: 25px;
+    }
+    
+    .input-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+    
+    .caption-input {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid var(--medium-gray);
+        border-radius: 12px;
+        resize: none;
+        transition: var(--transition);
+        font-family: inherit;
+        min-height: 120px;
+    }
+    
+    .caption-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        outline: none;
+    }
+    
+    /* Submit Button */
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #3a56d4, #3ab9f0);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+    
+    /* Loading State */
+    .submit-btn.loading {
+        pointer-events: none;
+    }
+    
+    .submit-btn.loading i {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .reel-creation-container {
+            padding: 15px;
+            align-items: flex-start;
+            min-height: auto;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .upload-card {
+            padding: 25px 15px;
+        }
+        
+        .submit-btn {
+            padding: 14px;
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .reel-card {
+            border-radius: 12px;
+        }
+        
+        .card-header {
+            padding: 15px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.2rem;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .upload-icon {
+            font-size: 2rem;
+        }
+        
+        .btn-upload {
+            padding: 8px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .caption-input {
+            min-height: 100px;
+            padding: 12px;
+        }
+        
+        .submit-btn {
+            padding: 13px;
+            font-size: 0.95rem;
+        }
+    }
+    
+    /* WebView Specific Adjustments */
+    @supports (-webkit-touch-callout: none) {
+        /* iOS WebView specific styles */
+        .reel-creation-container {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: max(20px, env(safe-area-inset-left));
+            padding-right: max(20px, env(safe-area-inset-right));
+        }
+        
+        .submit-btn, .btn-upload {
+            -webkit-appearance: none;
+        }
+        
+        input, textarea, button {
+            font-size: 16px; /* Prevent zoom on focus in iOS */
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const videoInput = document.getElementById('video');
+        const fileInfo = document.querySelector('.file-info');
+        const submitBtn = document.getElementById('submit-btn');
+        const reelForm = document.getElementById('reel-form');
+        
+        // Update file info when video is selected
+        videoInput.addEventListener('change', function() {
+            if (this.files.length) {
+                const fileName = this.files[0].name;
+                const fileSize = (this.files[0].size / (1024 * 1024)).toFixed(2);
+                fileInfo.textContent = `${fileName} (${fileSize} MB)`;
+                fileInfo.style.color = '#4361ee';
+            } else {
+                fileInfo.textContent = 'لم يتم اختيار ملف بعد';
+                fileInfo.style.color = '#6c757d';
+            }
+        });
+        
+        // Form submission handler
+        reelForm.addEventListener('submit', function(e) {
+            if (!videoInput.files.length) {
+                e.preventDefault();
+                alert('يرجى اختيار فيديو أولاً');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner me-2"></i> جاري النشر...';
+            
+            // You might want to add AJAX submission here for better UX
+        });
+        
+        // Enhance touch feedback on mobile
+        const interactiveElements = [submitBtn, ...document.querySelectorAll('.btn-upload')];
+        interactiveElements.forEach(el => {
+            el.addEventListener('touchstart', function() {
+                this.classList.add('active');
+            }, {passive: true});
+            
+            el.addEventListener('touchend', function() {
+                this.classList.remove('active');
+            }, {passive: true});
+        });
+    });
+</script>
+{% endblock %}

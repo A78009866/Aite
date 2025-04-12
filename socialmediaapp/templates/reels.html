@@ -1,0 +1,256 @@
+{% load static %}
+
+{% block content %}
+<style>
+    .reels-container {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+    }
+    
+    .reel {
+        height: 100vh;
+        scroll-snap-align: start;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+    
+    .reel-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+    
+    .reel-actions {
+        position: absolute;
+        right: 15px;
+        bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .reel-action {
+        margin-bottom: 20px;
+        text-align: center;
+        color: white;
+        cursor: pointer;
+    }
+    
+    .reel-user {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        color: white;
+    }
+    
+    .reel-user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+        border: 2px solid white;
+    }
+    
+    .reel-caption {
+        padding: 15px;
+        color: white;
+        background: linear-gradient(transparent, rgba(0,0,0,0.5));
+    }
+    
+    .like-animation {
+        animation: like 0.5s ease-in-out;
+    }
+    
+    @keyframes like {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.5); }
+        100% { transform: scale(1); }
+    }
+    
+    /* زر الرجوع الجديد */
+    .back-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .back-button:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    
+    /* أنماط جديدة للقلب الصغير */
+    .likes-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .small-heart {
+        font-size: 12px;
+        margin-bottom: 2px;
+        color: {% if request.user in reel.likes.all %}red{% else %}white{% endif %};
+    }
+</style>
+
+<!-- زر الرجوع للصفحة الرئيسية -->
+<button class="back-button" onclick="window.location.href='/home'">
+    <i class="fas fa-arrow-left">←</i>
+</button>
+
+<div class="reels-container">
+    {% for reel in reels %}
+    <div class="reel" id="reel-{{ reel.id }}">
+        <video class="reel-video" controls loop>
+            <source src="{{ reel.video.url }}" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+        
+        <div class="reel-user">
+            <img src="{{ reel.user.profile_picture.url }}" alt="{{ reel.user.username }}">
+            <span>{{ reel.user.username }}</span>
+        </div>
+        
+        {% if reel.caption %}
+        <div class="reel-caption">
+            {{ reel.caption }}
+        </div>
+        {% endif %}
+        
+        <div class="reel-actions">
+            <div class="reel-action like-action" onclick="likeReel({{ reel.id }})">
+                <div class="likes-container">
+                    <i class="fas fa-heart small-heart"></i>
+                    <i class="fas fa-heart fa-2x {% if request.user in reel.likes.all %}text-danger{% endif %}" id="reel-heart-{{ reel.id }}"></i>
+                    <div id="reel-likes-{{ reel.id }}">{{ reel.like_count }}</div>
+                </div>
+            </div>
+            <div class="reel-action">
+                <i class="fas fa-comment fa-2x"></i>
+            </div>
+            <div class="reel-action">
+                <i class="fas fa-share fa-2x"></i>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    // التمرير بين الريلز
+    let currentReel = 0;
+    const reels = document.querySelectorAll('.reel');
+    
+    // تشغيل الفيديو عند ظهوره
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const video = entry.target.querySelector('.reel-video');
+            if (entry.isIntersecting) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
+    }, { threshold: 0.7 });
+    
+    reels.forEach(reel => {
+        observer.observe(reel);
+    });
+    
+    // التعامل مع النقر المزدوج للإعجاب
+    reels.forEach(reel => {
+        reel.addEventListener('dblclick', (e) => {
+            const reelId = reel.id.split('-')[1];
+            likeReel(reelId);
+            
+            // عرض تأثير القلب
+            const heart = document.createElement('div');
+            heart.innerHTML = '<i class="fas fa-heart fa-5x text-danger" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.8;"></i>';
+            heart.style.position = 'absolute';
+            heart.style.top = e.clientY + 'px';
+            heart.style.left = e.clientX + 'px';
+            heart.style.pointerEvents = 'none';
+            heart.style.animation = 'like 1s ease-in-out forwards';
+            
+            reel.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        });
+    });
+    
+    // وظيفة الإعجاب
+    function likeReel(reelId) {
+        fetch(`/reel/${reelId}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const heartIcon = document.getElementById(`reel-heart-${reelId}`);
+            const smallHeart = document.querySelector(`#reel-${reelId} .small-heart`);
+            const likesCount = document.getElementById(`reel-likes-${reelId}`);
+            
+            if (data.liked) {
+                heartIcon.classList.add('text-danger');
+                heartIcon.classList.add('like-animation');
+                smallHeart.style.color = 'red';
+            } else {
+                heartIcon.classList.remove('text-danger');
+                smallHeart.style.color = 'white';
+            }
+            
+            likesCount.textContent = data.like_count;
+            
+            setTimeout(() => {
+                heartIcon.classList.remove('like-animation');
+            }, 500);
+        });
+    }
+    
+    // التمرير العمودي
+    let startY, endY;
+    document.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        endY = e.changedTouches[0].clientY;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        if (startY - endY > 50 && currentReel < reels.length - 1) {
+            // التمرير لأسفل
+            currentReel++;
+            reels[currentReel].scrollIntoView({ behavior: 'smooth' });
+        } else if (endY - startY > 50 && currentReel > 0) {
+            // التمرير لأعلى
+            currentReel--;
+            reels[currentReel].scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+{% endblock %}

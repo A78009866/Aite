@@ -1033,3 +1033,71 @@ def add_family_comment(request, family_id, post_id):
             return JsonResponse({"success": False, "error": "المنشور غير موجود"}, status=404)
     
     return JsonResponse({"success": False, "error": "طلب غير صالح"}, status=400)
+
+
+from django.shortcuts import render
+from .models import Reel
+import random
+
+@login_required
+def reels_view(request):
+    # جلب جميع الريلز وتحويلها إلى قائمة
+    reels = list(Reel.objects.all().order_by('-created_at'))
+    
+    # إذا كان هناك أكثر من ريل واحد، نقوم بترتيبهم عشوائيًا مع الحفاظ على الجديد في الأعلى
+    if len(reels) > 1:
+        user_reels = [reel for reel in reels if reel.user == request.user]
+        other_reels = [reel for reel in reels if reel.user != request.user]
+        random.shuffle(other_reels)
+        reels = user_reels + other_reels
+    
+    return render(request, 'reels.html', {'reels': reels})
+
+@login_required
+def like_reel(request, reel_id):
+    if request.method == 'POST':
+        reel = get_object_or_404(Reel, pk=reel_id)
+        user = request.user
+
+        if user in reel.likes.all():
+            reel.likes.remove(user)
+            liked = False
+        else:
+            reel.likes.add(user)
+            liked = True
+            # إرسال إشعار للمستخدم صاحب الريل
+            if user != reel.user:
+                Notification.objects.create(
+                    recipient=reel.user,
+                    sender=user,
+                    notification_type='like',
+                    content=f"{user.username} أعجب برييلك"
+                )
+
+        return JsonResponse({
+            'liked': liked,
+            'like_count': reel.likes.count()
+        })
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@login_required
+def create_reel(request):
+    if request.method == 'POST':
+        video = request.FILES.get('video')
+        caption = request.POST.get('caption', '')
+        
+        if video:
+            upload_result = cloudinary.uploader.upload(video, resource_type="video")
+            video_url = upload_result.get("secure_url")
+            
+            reel = Reel.objects.create(
+                user=request.user,
+                video=video_url,
+                caption=caption
+            )
+            
+            return redirect('reels')
+        
+        return render(request, 'create_reel.html', {'error': 'يجب اختيار فيديو'})
+    
+    return render(request, 'create_reel.html')

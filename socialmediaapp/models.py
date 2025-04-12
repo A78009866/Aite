@@ -221,3 +221,16 @@ class FamilyPost(models.Model):
     def __str__(self):
         return f"{self.user.username} in {self.family.name}"
 
+class Reel(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    video = CloudinaryField('video', resource_type="video")
+    caption = models.TextField(blank=True, null=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='reel_likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Reel by {self.user.username}"
+    
+    @property
+    def like_count(self):
+        return self.likes.count()
