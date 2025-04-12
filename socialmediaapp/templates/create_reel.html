@@ -82,6 +82,7 @@
         background-color: var(--light-gray);
         color: var(--text-color);
         line-height: 1.5;
+        font-size: 16px;
     }
     
     /* Main Container */
@@ -188,13 +189,14 @@
     
     .btn-upload {
         display: inline-block;
-        padding: 10px 25px;
+        padding: 12px 25px;
         background-color: var(--primary-color);
         color: white;
         border-radius: 8px;
         font-weight: 500;
         transition: var(--transition);
         margin-bottom: 10px;
+        font-size: 1rem;
     }
     
     .btn-upload:hover {
@@ -204,7 +206,7 @@
     
     .file-info {
         display: block;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: var(--dark-gray);
     }
     
@@ -309,58 +311,61 @@
         .upload-card {
             padding: 25px 15px;
         }
-        
-        .submit-btn {
-            padding: 14px;
-            font-size: 1rem;
-        }
     }
     
     @media (max-width: 480px) {
         .reel-card {
-            border-radius: 12px;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        
+        .reel-creation-container {
+            padding: 0;
+            align-items: stretch;
+            background: white;
         }
         
         .card-header {
-            padding: 15px;
-        }
-        
-        .card-header h2 {
-            font-size: 1.2rem;
+            padding: 15px 10px;
         }
         
         .card-body {
-            padding: 15px;
+            padding: 15px 10px;
         }
         
-        .upload-icon {
-            font-size: 2rem;
-        }
-        
-        .btn-upload {
-            padding: 8px 20px;
-            font-size: 0.9rem;
+        .upload-card {
+            padding: 20px 10px;
+            margin-bottom: 15px;
         }
         
         .caption-input {
-            min-height: 100px;
             padding: 12px;
+            min-height: 100px;
         }
         
         .submit-btn {
-            padding: 13px;
-            font-size: 0.95rem;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.3rem;
         }
     }
     
     /* WebView Specific Adjustments */
     @supports (-webkit-touch-callout: none) {
-        /* iOS WebView specific styles */
         .reel-creation-container {
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            padding-left: max(20px, env(safe-area-inset-left));
-            padding-right: max(20px, env(safe-area-inset-right));
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
         
         .submit-btn, .btn-upload {
@@ -368,7 +373,7 @@
         }
         
         input, textarea, button {
-            font-size: 16px; /* Prevent zoom on focus in iOS */
+            font-size: 16px;
         }
     }
 </style>
