@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.db.utils import IntegrityError
 
-User = get_user_model
+User = get_user_model()
 
 def signup_view(request):
     if request.method == 'POST':
@@ -28,9 +28,9 @@ def signup_view(request):
             user.save()
             login(request, user)  # تسجيل الدخول تلقائيًا بعد إنشاء الحساب
             return redirect('home')
-        except IntegrityError:
-            return render(request, 'signup.html', {'error': 'حدث خطأ أثناء التسجيل. حاول مرة أخرى.'})
-
+        except IntegrityError as e:
+            return render(request, 'signup.html', {'error': f'خطأ تقني: {str(e)}'})
+        
     return render(request, 'signup.html')
 
 def login_view(request):
