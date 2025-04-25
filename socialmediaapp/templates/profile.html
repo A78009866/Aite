@@ -27,6 +27,13 @@
             gap: 10px;
             margin-bottom: 10px;
         }
+        video {
+        width: 100%;
+        max-height: 500px;
+        background-color: #000;
+        border-radius: 10px;
+
+        }
 
         .post img {
             width: 100%;
@@ -622,13 +629,14 @@
                                 </div>
                             {% endif %}
                             {% if post.video %}
-                                <div class="mt-3">
-                                    <video controls width="100%">
-                                        <source src="{{ post.video.url }}" type="video/mp4">
-                                        متصفحك لا يدعم تشغيل الفيديو.
-                                    </video>
-                                </div>
-                            {% endif %}
+   <div class="mt-3 video-container">
+       <video controls width="100%" poster="{{ post.video.url|slice:':-4' }}.jpg">
+           <source src="{{ post.video.url }}" type="video/mp4">
+           متصفحك لا يدعم تشغيل الفيديو.
+       </video>
+   </div>
+   {% endif %}
+
                         
                             <div class="post-actions d-flex justify-content-between align-items-center mt-3">
                                 <!-- زر الإعجاب وعدد الإعجابات -->
