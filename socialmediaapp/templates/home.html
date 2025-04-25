@@ -2093,48 +2093,7 @@
             font-size: 14px;
         }
     }
-    /* أنماط التعليقات المحسنة */
-.comment {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 10px;
-    transition: all 0.3s;
-}
-
-.comment:hover {
-    background-color: #e9ecef;
-    transform: translateX(5px);
-}
-
-.comment-content {
-    flex: 1;
-}
-
-.comment-text {
-    margin: 5px 0;
-    word-break: break-word;
-}
-
-.comment img {
-    border: 2px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* أنماط الوضع المظلم للتعليقات */
-.dark-mode .comment {
-    background-color: #2d2d2d;
-    border: 1px solid #444;
-}
-
-.dark-mode .comment-content {
-    background-color: #3d3d3d;
-    color: #e0e0e0;
-}
-
-.dark-mode .comment:hover {
-    background-color: #3d3d3d;
-    }
+  
 </style>
 
 </head>
@@ -2580,47 +2539,28 @@ window.addEventListener('scroll', function() {
                                 <i class="fas fa-comment"></i> التعليقات
                             </button>
                         </div>
+                <!-- ✅ التعليقات -->
+                        <div class="collapse mt-3" id="comments-{{ post.id }}">
+                            <h6>التعليقات:</h6>
+                            <div class="comments-list">
+                                {% for comment in post.comments.all %}
+                                    <div class="comment">
+                                        <strong>{{ comment.user.username }}</strong>: {{ comment.content }}
+                                    </div>
+                                {% empty %}
+                                    <p>لا توجد تعليقات بعد.</p>
+                                {% endfor %}
+                            </div>
+                            <form method="POST" class="mt-2 add-comment-form" data-post-id="{{ post.id }}">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name="content" class="form-control comment-input" placeholder="أضف تعليقًا..." required>
+                                    <button type="submit" class="btn btn-primary">بعث</button>
+                                </div>
+                            </form>
+                        </div>
 
-                        <!-- ✅ التعليقات -->
-                        <!-- ✅ التعليقات -->
-<div class="collapse mt-3" id="comments-{{ post.id }}">
-    <h6>التعليقات:</h6>
-    <div class="comments-list">
-        {% for comment in post.comments.all %}
-            <div class="comment d-flex align-items-start mb-2">
-                <img src="{{ comment.user.profile_picture.url }}" 
-                     class="rounded-circle me-2" 
-                     width="40" 
-                     height="40" 
-                     alt="{{ comment.user.username }}"
-                     onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
-                <div class="comment-content bg-light p-2 rounded">
-                    <div class="d-flex align-items-center">
-                        <strong class="me-2">{{ comment.user.username }}</strong>
-                        {% if comment.user.is_verified %}
-                            <span class="verified-badge" title="حساب موثوق">
-                                <i class="fas fa-check-circle"></i>
-                            </span>
-                        {% endif %}
-                    </div>
-                    <div class="comment-text">{{ comment.content }}</div>
-                    <small class="text-muted">{{ comment.created_at|timesince }}</small>
-                </div>
-            </div>
-        {% empty %}
-            <p class="text-muted text-center">لا توجد تعليقات بعد.</p>
-        {% endfor %}
-    </div>
-    <form method="POST" class="mt-2 add-comment-form" data-post-id="{{ post.id }}">
-        {% csrf_token %}
-        <div class="input-group">
-            <input type="text" name="content" class="form-control comment-input" placeholder="أضف تعليقًا..." required>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
-    </form>
-</div>
+
                     </div>
                 {% endfor %}
             </div>
