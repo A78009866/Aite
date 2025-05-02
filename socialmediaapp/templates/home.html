@@ -2101,6 +2101,23 @@
     margin-bottom: 80px;
     padding: 15px;
 }
+    .post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.post-header .flex-grow-1 {
+    flex-grow: 1;
+    min-width: 0; /* لمنع تجاوز النص للعناصر الأخرى */
+}
+
+.post-header .btn {
+    white-space: nowrap; /* لمنع كسر سطر الأزرار */
+    margin-left: 10px; /* مسافة بين الأزرار */
+}
     </style>
 </head>
 <body>
@@ -2458,26 +2475,34 @@ window.addEventListener('scroll', function() {
         {% for post in posts %}
             <div class="post">
                         <div class="post-header d-flex align-items-center">
-                            <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2 border" alt="User avatar" 
-                            onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';"
-                            style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <h6 class="mb-0">
-                                    <a href="{% url 'profile' post.user.username %}" class="text-decoration-none">
-                                        {{ post.user.username }}
-                                        {% if post.user.is_verified %}
-                                            <span class="verified-badge" title="حساب موثوق (لديه أكثر من 10 متابعين)">
-                                                <i class="fas fa-check-circle"></i>
-                                            </span>
-                                        {% endif %}
-                                    </a>
-                                </h6>
-                                <small class="text-muted">{{ post.created_at }}</small>
-                                <a href="{% url 'chat' post.user.username %}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-comments"></i> دردشة
-                                </a>
-                                
-                            </div>
+    <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2 border" alt="User avatar" 
+         onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';"
+         style="width: 50px; height: 50px; object-fit: cover;">
+    <div class="flex-grow-1">
+        <h6 class="mb-0">
+            <a href="{% url 'profile' post.user.username %}" class="text-decoration-none">
+                {{ post.user.username }}
+                {% if post.user.is_verified %}
+                    <span class="verified-badge" title="حساب موثوق (لديه أكثر من 10 متابعين)">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                {% endif %}
+            </a>
+        </h6>
+        <small class="text-muted">{{ post.created_at }}</small>
+    </div>
+    {% if post.user == request.user %}
+        <form method="POST" action="{% url 'delete_post' post.id %}" class="ms-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('خصك تمحي المنشور؟');">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+    {% endif %}
+    <a href="{% url 'chat' post.user.username %}" class="btn btn-sm btn-outline-secondary ms-2">
+        <i class="fas fa-comments"></i> دردشة
+    </a>
+                        </div>
                             {% if post.user == request.user %}
                                 <form method="POST" action="{% url 'delete_post' post.id %}" class="ms-auto">
                                     {% csrf_token %}
