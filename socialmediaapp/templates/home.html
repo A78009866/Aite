@@ -2475,9 +2475,11 @@ window.addEventListener('scroll', function() {
         {% for post in posts %}
             <div class="post">
                 <div class="post-header d-flex align-items-center">
+                            <a href="{% url 'profile' post.user.username %}">
                             <img src="{{ post.user.profile_picture.url }}" class="rounded-circle me-2 border" alt="User avatar" 
                             onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';"
                             style="width: 50px; height: 50px; object-fit: cover;">
+                          </a>
                             <div>
                                 <h6 class="mb-0">
                                     <a href="{% url 'profile' post.user.username %}" class="text-decoration-none">
