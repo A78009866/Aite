@@ -282,12 +282,13 @@
                 <i class="fas fa-arrow-right"></i>
             </a>
             <div class="header-content">
-             <a href="{% url 'profile' post.user.username %}">
-                <img src="{{ other_user.profile_picture.url }}" 
-                alt="Profile" 
-                class="profile-pic"
-                onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
-             </a>
+             <a href="{% if other_user.username %}{% url 'profile' other_user.username %}{% else %}#{% endif %}">
+    <img src="{{ other_user.profile_picture.url }}" 
+         alt="Profile" 
+         class="profile-pic"
+         onerror="this.onerror=null; this.src='/media/profile_pics/default_profile.png';">
+</a>
+
                 <div class="user-name">
                     {{ other_user.username }}
                     {% if other_user.is_verified %}
