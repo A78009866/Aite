@@ -85,23 +85,36 @@ def post_create(request):
         content = request.POST.get("content", "").strip()
         image = request.FILES.get("image")
         audio = request.FILES.get("audio")
-        video = request.FILES.get("video")  # ✅ استقبال الفيديو
+        video = request.FILES.get("video")
 
+        audio_url = None
+        video_url = None
+
+        # ✅ رفع الفيديو إلى كلوديناري
         if video:
-            upload_result = cloudinary.uploader.upload(video, resource_type="video")  # ✅ رفع الفيديو كـ فيديو
+            upload_result = cloudinary.uploader.upload(video, resource_type="video")
             video_url = upload_result.get("secure_url")
-        else:
-            video_url = None
-        if not content and not image and not video and not audio:
+        
+        # ✅ رفع الصوت إلى كلوديناري
+        if audio:
+            upload_result = cloudinary.uploader.upload(audio, resource_type="raw")
+            audio_url = upload_result.get("secure_url")
+
+        if not content and not image and not video_url and not audio_url:
             return render(request, "post_create.html", {"error": "يجب إضافة نص أو صورة أو صوت أو فيديو."})
 
-        post = Post(user=request.user, content=content, video=video_url, image=image, audio=audio)
+        post = Post(
+            user=request.user, 
+            content=content, 
+            video=video_url, 
+            image=image, 
+            audio=audio_url
+        )
         post.save()
 
         return redirect("home")
 
     return render(request, "post_create.html")
-
 
 from django.http import JsonResponse
 
