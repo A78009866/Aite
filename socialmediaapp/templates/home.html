@@ -2314,7 +2314,7 @@ document.getElementById("delete-account-form").addEventListener("submit", functi
     <!-- الصف الثاني: شريط البحث وزر الريلز -->
     <div class="d-flex align-items-center w-100" style="position: relative;">
         <input type="text" class="search-bar form-control me-2" placeholder="حوس على مستخدمين ولا منشورات..." id="search-input">
-        <a href="{% url 'reels' %}" class="btn btn-outline-primary btn-sm" style="white-space: nowrap;">
+        <a href="{% url 'reels_list' %}" class="btn btn-outline-primary btn-sm" style="white-space: nowrap;">
             <i class="fas fa-film me-1"></i> ريلز
         </a>
         <div class="search-results" id="search-results"></div>
@@ -2365,7 +2365,7 @@ window.addEventListener('scroll', function() {
             <a href="{% url 'post_create' %}" class="create-option">
                 <i class="fas fa-edit me-2"></i> منشور جديد
             </a>
-            <a href="{% url 'create_reel' %}" class="create-option">
+            <a href="{% url 'upload_reel' %}" class="create-option">
                 <i class="fas fa-film me-2"></i> ريل جديد
             </a>
         </div>

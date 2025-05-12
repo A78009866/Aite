@@ -35,7 +35,25 @@ def validate_no_html(value):
     if re.search(r'<[^>]+>', value):
         raise ValidationError('ممنوع استخدام علامات HTML!')
 
-
+class Reels(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    video = CloudinaryField('video', resource_type="video")
+    caption = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    likers = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='reels_likes')
+    views = models.PositiveIntegerField(default=0)
+    music = models.CharField(max_length=255, blank=True, null=True)  # يمكن ربطه بنموذج موسيقى لاحقًا
+    
+    class Meta:
+        verbose_name_plural = "Reels"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Reel by {self.user.username}"
+    
+    def increment_views(self):
+        self.views += 1
+        self.save()
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -215,16 +233,3 @@ class FamilyPost(models.Model):
     def __str__(self):
         return f"{self.user.username} in {self.family.name}"
 
-class Reel(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    video = CloudinaryField('video', resource_type="video")
-    caption = models.TextField(blank=True, null=True)
-    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='reel_likes')
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Reel by {self.user.username}"
-    
-    @property
-    def like_count(self):
-        return self.likes.count()

@@ -1,0 +1,321 @@
+
+{% block content %}
+<div class="upload-container">
+    <h2>رفع ريل جديد</h2>
+    
+    <form id="reel-upload-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="video">اختر فيديو:</label>
+            <input type="file" id="video" name="video" accept="video/*" required>
+            <small>الحد الأقصى للحجم: 50MB</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="caption">وصف (اختياري):</label>
+            <textarea id="caption" name="caption" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="music">موسيقى (اختياري):</label>
+            <input type="text" id="music" name="music">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">رفع الريل</button>
+    </form>
+    
+    <div id="upload-progress" style="display: none;">
+        <p>جاري رفع الفيديو...</p>
+        <progress value="0" max="100"></progress>
+    </div>
+    
+    <div id="upload-preview" style="display: none;">
+        <video controls style="max-width: 100%;"></video>
+        <p>تم رفع الريل بنجاح! <a href="#" id="view-reel-link">عرض الريل</a></p>
+    </div>
+</div>
+
+<script>
+document.getElementById('reel-upload-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const progressBar = document.querySelector('#upload-progress progress');
+    const uploadProgress = document.getElementById('upload-progress');
+    const uploadPreview = document.getElementById('upload-preview');
+    const previewVideo = uploadPreview.querySelector('video');
+    
+    uploadProgress.style.display = 'block';
+    
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "upload_reel" %}', true);
+    
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            const percentComplete = (e.loaded / e.total) * 100;
+            progressBar.value = percentComplete;
+        }
+    };
+    
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                uploadProgress.style.display = 'none';
+                
+                // عرض معاينة الفيديو
+                previewVideo.src = response.video_url;
+                uploadPreview.style.display = 'block';
+                
+                // تحديث رابط عرض الريل
+                document.getElementById('view-reel-link').href = `/reels/${response.reel_id}/`;
+            } else {
+                alert('حدث خطأ: ' + response.error);
+                uploadProgress.style.display = 'none';
+            }
+        } else {
+            alert('حدث خطأ أثناء الرفع');
+            uploadProgress.style.display = 'none';
+        }
+    };
+    
+    xhr.send(formData);
+});
+</script>
+
+<style>
+.upload-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="file"],
+.form-group textarea,
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#upload-progress {
+    margin-top: 20px;
+}
+
+progress {
+    width: 100%;
+    height: 20px;
+}
+
+#upload-preview {
+    margin-top: 20px;
+    text-align: center;
+}
+</style>
+<style>
+.upload-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+}
+
+.upload-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    position: relative;
+}
+
+.upload-container h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, #ff4d4d, #f9cb28);
+    margin: 10px auto 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="file"]:hover {
+    border-color: #f9cb28;
+    background: #fff;
+}
+
+.form-group textarea,
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-group textarea:focus,
+.form-group input[type="text"]:focus {
+    border-color: #f9cb28;
+    box-shadow: 0 0 0 3px rgba(249, 203, 40, 0.2);
+    outline: none;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+button[type="submit"] {
+    background: linear-gradient(45deg, #ff4d4d, #f9cb28);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 77, 77, 0.4);
+}
+
+#upload-progress {
+    margin-top: 25px;
+    text-align: center;
+    color: #555;
+}
+
+#upload-progress p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+progress {
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+progress::-webkit-progress-value {
+    background: linear-gradient(to right, #ff4d4d, #f9cb28);
+    border-radius: 5px;
+}
+
+#upload-preview {
+    margin-top: 25px;
+    text-align: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+#upload-preview video {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+#upload-preview p {
+    color: #333;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+#view-reel-link {
+    color: #ff4d4d;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+#view-reel-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .upload-container {
+        padding: 25px;
+        margin: 20px auto;
+    }
+    
+    .upload-container h2 {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .upload-container {
+        padding: 20px 15px;
+        margin: 15px auto;
+    }
+    
+    .form-group input[type="file"],
+    .form-group textarea,
+    .form-group input[type="text"] {
+        padding: 10px 12px;
+    }
+}
+</style>
+{% endblock %}

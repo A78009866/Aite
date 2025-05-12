@@ -7,6 +7,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.db.utils import IntegrityError
+from .models import Reels  # أضف هذا الاستيراد مع باقي الاستيرادات الأخرى
 
 User = get_user_model()
 
@@ -1048,69 +1049,137 @@ def add_family_comment(request, family_id, post_id):
     return JsonResponse({"success": False, "error": "طلب غير صالح"}, status=400)
 
 
-from django.shortcuts import render
-from .models import Reel
-import random
+from django.views.decorators.csrf import csrf_exempt
+import cloudinary.uploader
+from datetime import timedelta
 
 @login_required
-def reels_view(request):
-    # جلب جميع الريلز وتحويلها إلى قائمة
-    reels = list(Reel.objects.all().order_by('-created_at'))
+def reels_list(request):
+    # جلب الريلز من آخر أسبوع مع ترتيب حسب عدد المشاهدات والإعجابات
+    reels = Reels.objects.filter(
+        created_at__gte=timezone.now()-timedelta(days=7)
+    ).annotate(
+        likes_count=models.Count('likers')
+    ).order_by('-views', '-likes_count', '-created_at')
     
-    # إذا كان هناك أكثر من ريل واحد، نقوم بترتيبهم عشوائيًا مع الحفاظ على الجديد في الأعلى
-    if len(reels) > 1:
-        user_reels = [reel for reel in reels if reel.user == request.user]
-        other_reels = [reel for reel in reels if reel.user != request.user]
-        random.shuffle(other_reels)
-        reels = user_reels + other_reels
+    return render(request, 'reels/list.html', {
+        'reels': reels,
+        'is_reels_page': True  # للتمييز في القوالب
+    })
+
+@login_required
+def upload_reel(request):
+    if request.method == 'POST':
+        video = request.FILES.get('video')
+        caption = request.POST.get('caption', '').strip()
+        music = request.POST.get('music', '').strip()
+        
+        if not video:
+            return JsonResponse({'success': False, 'error': 'يجب اختيار فيديو'})
+        
+        try:
+            # رفع الفيديو إلى Cloudinary
+            upload_result = cloudinary.uploader.upload(
+                video,
+                resource_type="video",
+                chunk_size=6000000,  # 6MB chunks for large files
+                eager=[
+                    {'width': 720, 'height': 1280, 'crop': 'fill', 'format': 'mp4'},
+                    {'width': 480, 'height': 854, 'crop': 'fill', 'format': 'mp4'}
+                ],
+                eager_async=True
+            )
+            
+            reel = Reels.objects.create(
+                user=request.user,
+                video=upload_result['secure_url'],
+                caption=caption,
+                music=music
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'reel_id': reel.id,
+                'video_url': reel.video.url
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
     
-    return render(request, 'reels.html', {'reels': reels})
+    return render(request, 'reels/upload.html')
+
+@login_required
+def reel_detail(request, reel_id):
+    reel = get_object_or_404(Reels, id=reel_id)
+    
+    # زيادة عدد المشاهدات عند عرض الريل
+    if request.user != reel.user:
+        reel.increment_views()
+    
+    
+    # التحقق إذا كان المستخدم الحالي معجب بالريل
+    is_liked = reel.likers.filter(id=request.user.id).exists()
+    
+    return render(request, 'reels/detail.html', {
+        'reel': reel,
+        'is_liked': is_liked,
+        'is_reels_page': True
+    })
 
 @login_required
 def like_reel(request, reel_id):
     if request.method == 'POST':
-        reel = get_object_or_404(Reel, pk=reel_id)
+        reel = get_object_or_404(Reels, id=reel_id)
         user = request.user
-
-        if user in reel.likes.all():
-            reel.likes.remove(user)
-            liked = False
-        else:
-            reel.likes.add(user)
-            liked = True
+        
+        if user not in reel.likers.all():
+            reel.likers.add(user)
+            
             # إرسال إشعار للمستخدم صاحب الريل
             if user != reel.user:
                 Notification.objects.create(
                     recipient=reel.user,
                     sender=user,
                     notification_type='like',
-                    content=f"{user.username} أعجب برييلك"
+                    content=f"{user.username} أعجب بريلك",
+                    post=None
                 )
-
-        return JsonResponse({
-            'liked': liked,
-            'like_count': reel.likes.count()
-        })
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
+            
+            return JsonResponse({
+                'success': True,
+                'action': 'like',
+                'likes_count': reel.likers.count()
+            })
+        return JsonResponse({'success': False, 'error': 'تم الإعجاب بالفعل'})
+    return JsonResponse({'success': False, 'error': 'طريقة غير مسموحة'})
 
 @login_required
-def create_reel(request):
+def unlike_reel(request, reel_id):
     if request.method == 'POST':
-        video = request.FILES.get('video')
-        caption = request.POST.get('caption', '')
+        reel = get_object_or_404(Reels, id=reel_id)
+        user = request.user
         
-        if video:
-            upload_result = cloudinary.uploader.upload(video, resource_type="video")
-            video_url = upload_result.get("secure_url")
-            
-            reel = Reel.objects.create(
-                user=request.user,
-                video=video_url,
-                caption=caption
-            )
-            
-            return redirect('reels')
-        
-        return render(request, 'create_reel.html', {'error': 'يجب اختيار فيديو'})
-    
-    return render(request, 'create_reel.html')
+        if user in reel.likers.all():
+            reel.likers.remove(user)
+            return JsonResponse({
+                'success': True,
+                'action': 'unlike',
+                'likes_count': reel.likers.count()
+            })
+        return JsonResponse({'success': False, 'error': 'لم يتم الإعجاب بعد'})
+    return JsonResponse({'success': False, 'error': 'طريقة غير مسموحة'})
+
+@login_required
+def delete_reel(request, reel_id):
+    reel = get_object_or_404(Reels, id=reel_id, user=request.user)
+    reel.delete()
+    return JsonResponse({'success': True})
+
+@login_required
+def increment_reel_view(request, reel_id):
+    if request.method == 'POST':
+        reel = get_object_or_404(Reels, id=reel_id)
+        if request.user != reel.user:
+            reel.increment_views()
+        return JsonResponse({'success': True, 'views': reel.views})
+    return JsonResponse({'success': False})
+
