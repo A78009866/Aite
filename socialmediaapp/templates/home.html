@@ -2119,9 +2119,70 @@
     margin-left: 10px; /* مسافة بين الأزرار */
 }
     </style>
+    <style>
+/* أنماط نافذة عرض الصورة */
+.image-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-modal.active {
+    display: flex;
+}
+
+.image-modal-content {
+    max-width: 90%;
+    max-height: 90vh;
+    position: relative;
+}
+
+.image-modal-content img {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 5px;
+}
+
+.close-image-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .image-modal-content {
+        max-width: 95%;
+    }
+    
+    .close-image-modal {
+        top: 10px;
+        right: 10px;
+        font-size: 30px;
+    }
+}
+    </style>
 </head>
 <body>
-   
+   <!-- نافذة عرض الصورة -->
+<div class="image-modal" id="image-modal">
+    <span class="close-image-modal">&times;</span>
+    <div class="image-modal-content">
+        <img src="" alt="صورة مكبرة" id="expanded-image">
+    </div>
+</div>
     <!-- في قسم الإعدادات في home.html -->
     <!-- في قسم الإعدادات في home.html -->
 <div id="settings-modal" class="modal-overlay">
@@ -2166,6 +2227,31 @@
                     </button>
                 </form>
             </div>
+            <script>
+// فتح الصورة عند النقر عليها
+document.querySelectorAll('.post-image-container img').forEach(img => {
+    img.addEventListener('click', function() {
+        const modal = document.getElementById('image-modal');
+        const expandedImg = document.getElementById('expanded-image');
+        expandedImg.src = this.src;
+        modal.classList.add('active');
+    });
+});
+
+// إغلاق النافذة المنبثقة
+document.querySelector('.image-modal').addEventListener('click', function(e) {
+    if(e.target === this || e.target.classList.contains('close-image-modal')) {
+        this.classList.remove('active');
+    }
+});
+
+// إغلاق عند الضغط على زر ESC
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') {
+        document.getElementById('image-modal').classList.remove('active');
+    }
+});
+            </script>
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     const createBtn = document.getElementById("create-btn");
@@ -2509,10 +2595,13 @@ window.addEventListener('scroll', function() {
 
                         <p class="post-content mt-2">{{ post.content }}</p>
                         
-                        {% if post.image and post.image.url %}
-    <div class="post-image-container">
-        <img src="{{ post.image.url }}" alt="" class="img-fluid rounded">
-    </div>
+{% if post.image and post.image.url %}
+<div class="post-image-container">
+    <img src="{{ post.image.url }}" 
+         alt="" 
+         class="img-fluid rounded"
+         style="cursor: zoom-in;">
+</div>
 {% endif %}
 {% if post.audio %}
     <div class="mt-3">
