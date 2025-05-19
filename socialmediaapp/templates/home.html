@@ -2603,6 +2603,7 @@ window.addEventListener('scroll', function() {
          style="cursor: zoom-in;">
 </div>
 {% endif %}
+
 {% if post.audio %}
     <div class="mt-3">
         <audio controls>
@@ -3661,6 +3662,30 @@ document.getElementById("join-family-btn").addEventListener("click", function() 
     
     // ... باقي الدوال الأخرى
     </script>
-    
+<script>
+    // فتح الصورة عند النقر عليها
+document.querySelectorAll('.post-image-container img').forEach(img => {
+    img.addEventListener('click', function() {
+        const modal = document.getElementById('image-modal');
+        const expandedImg = document.getElementById('expanded-image');
+        expandedImg.src = this.src;
+        modal.classList.add('active');
+    });
+});
+
+// إغلاق النافذة المنبثقة
+document.querySelector('.image-modal').addEventListener('click', function(e) {
+    if (e.target === this || e.target.classList.contains('close-image-modal')) {
+        this.classList.remove('active');
+    }
+});
+
+// إغلاق عند الضغط على زر ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.getElementById('image-modal').classList.remove('active');
+    }
+});
+</script>
 </body>
 </html>
