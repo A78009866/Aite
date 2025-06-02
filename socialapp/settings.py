@@ -111,19 +111,17 @@ WSGI_APPLICATION = 'socialapp.wsgi.application'
 # تحليل Internal Database URL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # استخدام PostgreSQL
-        'NAME': 'railway',  # اسم قاعدة البيانات
-        'USER': 'postgres',  # اسم المستخدم
-        'PASSWORD': 'VtSielhJRwnjUAXXXJELzrQUFtpbUAKk',  # كلمة المرور
-        'HOST': 'postgres.railway.internal',  # Hostname
-        'PORT': '5432',  # Port
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'vaite',
+        'USER': 'vaite_user',
+        'PASSWORD': '9nUWhPFqe5zMOBXAgDXp1VHrWJsiA6TJ',
+        'HOST': 'dpg-d0usg2p5pdvs73adev0g-a.oregon-postgres.render.com',  # اسم المضيف فقط بدون "postgresql://" أو أي إضافات أخرى
+        'PORT': '5432',
     }
 }
 import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.parse('postgresql://postgres:VtSielhJRwnjUAXXXJELzrQUFtpbUAKk@turntable.proxy.rlwy.net:46027/railway')
-}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
