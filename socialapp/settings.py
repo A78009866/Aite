@@ -45,6 +45,16 @@ DATABASES = {
     }
 }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.iintfuvqdjxlpsghimqc',
+        'PASSWORD': 'vestro',
+        'HOST': 'aws-0-us-east-2.pooler.supabase.com',
+        'PORT': '5432',
+    }
+}
 
 # Application definition
 
@@ -106,20 +116,6 @@ WSGI_APPLICATION = 'socialapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-
-# تحليل Internal Database URL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'vaite',
-        'USER': 'vaite_user',
-        'PASSWORD': '9nUWhPFqe5zMOBXAgDXp1VHrWJsiA6TJ',
-        'HOST': 'dpg-d0usg2p5pdvs73adev0g-a.oregon-postgres.render.com',  # اسم المضيف فقط بدون "postgresql://" أو أي إضافات أخرى
-        'PORT': '5432',
-    }
-}
-import dj_database_url
 
 
 
